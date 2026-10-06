@@ -1,31 +1,46 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { ref, onMounted } from "vue";
 
-const searchQuery = ref("");
+const cards = ref<any[]>([]);
+const loading = ref(true);
+const error = ref("");
 
-function searchCards() {
-  console.log("Searching for:", searchQuery.value);
+async function getCards() {
+  try {
+    const response = await fetch("http://localhost:3000/api/cards");
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    cards.value = await response.json();
+
+    console.log(cards.value);
+  } catch (err) {
+    console.error(err);
+    error.value = "Could not load cards.";
+  } finally {
+    loading.value = false;
+  }
 }
+
+onMounted(() => {
+  getCards();
+});
 </script>
 
 <template>
   <main class="container">
     <h1>Card Search</h1>
 
-    <form class="row" @submit.prevent="searchCards">
-      <input
-        id="card-search-input"
-        v-model="searchQuery"
-        placeholder="Search for a card..."
-      />
-      <button type="submit">Search</button>
-    </form>
+    <p v-if="loading">Loading cards...</p>
 
-    <p></p>
+    <p v-else-if="error">
+      {{ error }}
+    </p>
 
-    <RouterLink to="/" class="nav-button">
-      Home
-    </RouterLink>
+    <div v-else>
+      <p>Found {{ cards.length }} cards.</p>
+    </div>
   </main>
 </template>

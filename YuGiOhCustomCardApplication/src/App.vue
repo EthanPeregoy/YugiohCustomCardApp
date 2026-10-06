@@ -69,6 +69,88 @@ main {
   width: 300px;
 }
 
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 25px auto;
+  width: 90%;
+  max-width: 600px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 16px;
+
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
+
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: white;
+}
+
+.search-button {
+  padding: 12px 24px;
+
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+
+  background: rgba(0, 0, 0, 0.75);
+
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.search-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.card-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+
+  width: 90%;
+  max-width: 1200px;
+
+  margin: 30px auto;
+}
+
+.card-result {
+  display: flex;
+  justify-content: center;
+}
+
+.card-image {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+
+  border-radius: 6px;
+
+  transition: transform 0.2s;
+}
+
+.card-image:hover {
+  transform: scale(1.05);
+}
+
 
 /* =========================
    Headings

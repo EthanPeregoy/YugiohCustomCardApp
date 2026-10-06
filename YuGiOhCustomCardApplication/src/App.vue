@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { invoke } from "@tauri-apps/api/core";
+import { RouterView } from "vue-router";
 
 const greetMsg = ref("");
 const name = ref("");
@@ -12,34 +13,15 @@ async function greet() {
 </script>
 
 <template>
-  <main class="container">
-    <h1>Welcome Duelist!</h1>
-
-    <form class="row" @submit.prevent="greet">
-      <input id="greet-input" v-model="name" placeholder="Enter a name..." />
-      <button type="submit">Greet</button>
-    </form>
-    <p>{{ greetMsg }}</p>
-  </main>
+  <RouterView />
 </template>
 
 <style>
+/* =========================
+   Global Styles
+   ========================= */
 
-  body {
-    width: 100%;
-    min-height: 100%;
-    margin: 0;
-  }
-  main {
-    min-height: 100vh;
-    background-image: url('./assets/DarkHole.jpg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
-    background-size: cover;
-  }
-
-  :root {
+:root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
@@ -55,17 +37,64 @@ async function greet() {
   -webkit-text-size-adjust: 100%;
 }
 
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+
+/* =========================
+   Main Page Layout
+   ========================= */
+
+main {
+  min-height: 100vh;
+
+  background-image: url("./assets/DarkHole.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
 .container {
   margin: 0;
+
   display: flex;
   flex-direction: column;
 }
 
 .row {
   margin-top: 2vh;
+
   display: flex;
   justify-content: center;
+  align-items: center;
+
+  gap: 5px;
 }
+
+.card-search-input {
+  width: 300px;
+}
+
+
+/* =========================
+   Headings
+   ========================= */
+
+h1 {
+  padding-top: 10vh;
+
+  position: sticky;
+  text-align: center;
+}
+
+
+/* =========================
+   Links & Navigation
+   ========================= */
 
 a {
   font-weight: 500;
@@ -77,22 +106,51 @@ a:hover {
   color: #535bf2;
 }
 
-h1 {
-  padding-top: 10vh;
-  position: sticky;
-  text-align: center;
+.nav-button {
+  align-self: center;
+
+  padding: 0.6em 1.2em;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: 500;
+
+  color: #ffffff;
+  background-color: #000000;
+
+  text-decoration: none;
+  cursor: pointer;
+
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
+
+.nav-button:hover {
+  border-color: #396cd8;
+}
+
+
+/* =========================
+   Inputs & Buttons
+   ========================= */
 
 input,
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
   padding: 0.6em 1.2em;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+  outline: none;
+
+  font-family: inherit;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
+
   color: #0f0f0f;
   background-color: #ffffff;
+
   transition: border-color 0.25s;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
@@ -104,19 +162,20 @@ button {
 button:hover {
   border-color: #396cd8;
 }
+
 button:active {
   border-color: #396cd8;
   background-color: #e8e8e8;
 }
 
-input,
-button {
-  outline: none;
-}
-
 #greet-input {
   margin-right: 5px;
 }
+
+
+/* =========================
+   Dark Mode
+   ========================= */
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -133,9 +192,9 @@ button {
     color: #ffffff;
     background-color: #0f0f0f98;
   }
+
   button:active {
     background-color: #0f0f0f69;
   }
 }
-
 </style>

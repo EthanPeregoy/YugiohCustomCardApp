@@ -39,10 +39,11 @@ function formatDescription(description: string) {
   // Put every bullet point onto its own line before processing.
   description = description.replace(/\s*●\s*/g, "\n● ");
 
+  // Put "During" effects onto a new line.
   description = description.replace(
-  /\s+(During\s)/g,
-  "\n$1"
-    );
+    /\s+(During\s)/g,
+    "\n$1"
+  );
 
   // Split existing/newly-created lines.
   const lines = description
@@ -111,6 +112,99 @@ function formatDescription(description: string) {
   return effects;
 }
 
+function hasMonsterEffect(card: any) {
+  if (!card.description) {
+    return false;
+  }
+
+  const formattedText = formatDescription(card.description);
+
+  return formattedText.length > 1;
+}
+
+function getMonsterTypes(card: any) {
+  const types: string[] = [];
+
+  // Zombie, Dragon, Warrior, Fiend, etc.
+  if (card.card_subtype) {
+    types.push(card.card_subtype);
+  }
+
+  if (!card.card_type) {
+    return types.join(" / ");
+  }
+
+  const typeWords: string[] = card.card_type
+    .replace(/\bMonster\b/g, "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  const extraDeckTypes = [
+    "Fusion",
+    "Synchro",
+    "Xyz",
+    "Link"
+  ];
+
+  // Add types contained directly in card_type.
+  for (const type of typeWords) {
+    if (!types.includes(type)) {
+      types.push(type);
+    }
+  }
+
+  const isExtraDeckMonster = typeWords.some((type: string) =>
+    extraDeckTypes.includes(type)
+  );
+
+  // Add Pendulum if your frame_type identifies it.
+  if (
+    card.frame_type?.toLowerCase().includes("pendulum") &&
+    !types.includes("Pendulum")
+  ) {
+    types.push("Pendulum");
+  }
+
+  // Add Tuner if your data identifies the card as one.
+  if (
+    card.card_type?.includes("Tuner") &&
+    !types.includes("Tuner")
+  ) {
+    types.push("Tuner");
+  }
+
+  // Determine Effect for Extra Deck monsters when the API
+  // doesn't explicitly provide it.
+  if (
+    isExtraDeckMonster &&
+    !types.includes("Effect") &&
+    hasMonsterEffect(card)
+  ) {
+    types.push("Effect");
+  }
+
+  return types.join(" / ");
+}
+
+function getSpellTrapTypes(card: any) {
+  const types: string[] = [];
+
+  if (card.card_type) {
+    const cardType = card.card_type
+      .replace(/\bCard\b/g, "")
+      .trim();
+
+    types.push(cardType);
+  }
+
+  if (card.card_subtype) {
+    types.push(card.card_subtype);
+  }
+
+  return types.join(" / ");
+}
+
 onMounted(() => {
   fetchCardDetails();
 });
@@ -125,7 +219,8 @@ onMounted(() => {
     </p>
 
     <div v-else-if="cardDetails" class="card-details">
-      
+
+      <!-- Card Image -->
       <div class="card-details-image">
         <img
           :src="cardDetails.image_path"
@@ -133,18 +228,41 @@ onMounted(() => {
         />
       </div>
 
+      <!-- Card Information -->
       <div class="card-details-info">
+
         <h2>{{ cardDetails.card_name }}</h2>
 
+       <!-- Monster Type -->
+        <p
+        v-if="cardDetails.card_type?.includes('Monster')"
+        class="card-type"
+        >
+        [{{ getMonsterTypes(cardDetails) }}]
+        </p>
+
+        <!-- Spell / Trap Type -->
+        <p
+        v-else-if="
+            cardDetails.card_type === 'Spell Card' ||
+            cardDetails.card_type === 'Trap Card'
+        "
+        class="card-type"
+        >
+        [{{ getSpellTrapTypes(cardDetails) }}]
+        </p>
+
+        <!-- Card Description -->
         <div class="card-description">
-            <p
-                v-for="(effect, index) in formatDescription(cardDetails.description)"
-                :key="index"
-                :class="{ 'bullet-effect': effect.startsWith('●') }"
-            >
-                {{ effect }}
-            </p>
+          <p
+            v-for="(effect, index) in formatDescription(cardDetails.description)"
+            :key="index"
+            :class="{ 'bullet-effect': effect.startsWith('●') }"
+          >
+            {{ effect }}
+          </p>
         </div>
+
       </div>
 
     </div>
@@ -180,8 +298,11 @@ onMounted(() => {
 .card-details-info {
   width: 450px;
   text-align: left;
+
   background-color: #1d1d1dbf;
+
   border-radius: 8px;
+
   padding: 15px 20px;
 }
 
@@ -189,12 +310,21 @@ onMounted(() => {
   margin-top: 0;
 }
 
+.card-type {
+  margin-top: 5px;
+  margin-bottom: 20px;
+
+  font-weight: bold;
+}
+
 .card-description p {
   margin: 0 0 16px 0;
 }
+
 .card-description p:last-child {
   margin-bottom: 0;
 }
+
 .card-description .bullet-effect {
   margin-top: -12px;
   margin-bottom: 16px;

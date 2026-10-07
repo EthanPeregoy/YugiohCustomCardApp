@@ -6,6 +6,7 @@ import CardShopView from "./views/CardShop.vue";
 import PackShopView from "./views/PackShop.vue";
 import CollectionView from "./views/Collection.vue";
 import DecksView from "./views/Decks.vue";
+import CardView from "./views/CardView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -38,6 +39,10 @@ const router = createRouter({
     {
       path: "/decks",
       component: DecksView,
+    },
+    {
+      path: "/cards/:id",
+      component: CardView,
     },
   ],
 });

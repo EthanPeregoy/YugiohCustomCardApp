@@ -6,6 +6,8 @@ const error = ref("");
 const success = ref("");
 const loading = ref(false);
 
+const isTransitioning = ref(false);
+
 const router = useRouter();
 
 const isRegistering = ref(false);
@@ -88,7 +90,15 @@ async function loginUser() {
 
     console.log("Logged in user:", data);
 
-    router.push("/home");
+    isTransitioning.value = true;
+
+    // Wait 3 seconds before entering Home
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    await router.push({
+    path: "/home",
+    query: { transition: "login" }
+    });
 
   } catch (err) {
     error.value =
@@ -177,6 +187,13 @@ async function loginUser() {
         Back to Title
       </button>
     </div>
+
+    <Transition name="login-fade">
+        <div v-if="isTransitioning" class="login-transition">
+            <h1>Welcome, {{ username }}</h1>
+            <p>Your journey awaits...</p>
+        </div>
+    </Transition>
   </main>
 </template>
 
@@ -285,5 +302,60 @@ async function loginUser() {
 .success-message {
   color: #77ffbb;
   margin-top: 1rem;
+}
+
+.login-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.97);
+  color: white;
+}
+
+.login-transition h1 {
+  position: static;
+  padding: 0;
+  margin: 0;
+
+  font-size: 2.5rem;
+  text-shadow: 0 0 20px rgba(180, 130, 255, 0.9);
+
+  animation: welcome-glow 2s ease-in-out infinite alternate;
+}
+
+.login-transition p {
+  color: #bbb;
+  margin-top: 1rem;
+  letter-spacing: 2px;
+}
+
+/* Fade in the overlay */
+.login-fade-enter-active {
+  transition: opacity 1s ease-in-out;
+}
+
+.login-fade-enter-from {
+  opacity: 0;
+}
+
+.login-fade-enter-to {
+  opacity: 1;
+}
+
+/* Glowing welcome message */
+@keyframes welcome-glow {
+  from {
+    text-shadow: 0 0 10px rgba(180, 130, 255, 0.4);
+  }
+
+  to {
+    text-shadow: 0 0 30px rgba(180, 130, 255, 1);
+  }
 }
 </style>

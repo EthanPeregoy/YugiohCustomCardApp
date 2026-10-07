@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import titleBackground from "../assets/GalaxyBackground.gif";
 
 const router = useRouter();
 
@@ -11,8 +10,7 @@ function startApp() {
 
 <template>
   <main
-    class="title-screen"
-    :style="{ backgroundImage: `url(${titleBackground})` }"
+    class="title-screen galaxy-background"
   >
     <div class="title-content">
       <div class="game-title">

@@ -41,7 +41,7 @@ body {
 main {
   min-height: 100vh;
 
-  background-image: url("./assets/DarkHole.jpg");
+  background-image: url("./assets/CosmosBackground.gif");
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
@@ -268,5 +268,13 @@ button:active {
   button:active {
     background-color: #0f0f0f69;
   }
+}
+
+.galaxy-background {
+  background-image: url("./assets/GalaxyBackground.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
 }
 </style>

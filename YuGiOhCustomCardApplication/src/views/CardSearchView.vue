@@ -148,7 +148,7 @@ async function searchCards(query: string, resetPage = true) {
         </button>
     </div>
 
-    <RouterLink to="/" class="nav-button">
+    <RouterLink to="/home" class="nav-button">
       Home
     </RouterLink>
 

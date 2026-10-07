@@ -6,7 +6,7 @@ import { RouterLink } from "vue-router";
 
 <template>
   <main class="container">
-    <h1>User</h1>
+    <h1>Login</h1>
 
     <RouterLink to="/home" class="nav-button">
         Home

@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 
+import TitleScreenView from "./views/TitleScreenView.vue";
+import LoginView from "./views/LoginView.vue";
 import HomeView from "./views/HomeView.vue";
 import CardSearchView from "./views/CardSearchView.vue";
 import CardView from "./views/CardView.vue";
@@ -15,6 +17,13 @@ const router = createRouter({
   routes: [
     {
       path: "/",
+      component: TitleScreenView,
+    },{
+      path: "/login",
+      component: LoginView,
+    },
+    {
+      path: "/home",
       component: HomeView,
     },
     {

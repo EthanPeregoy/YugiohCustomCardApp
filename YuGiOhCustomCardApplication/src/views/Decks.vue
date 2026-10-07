@@ -8,7 +8,7 @@ import { RouterLink } from "vue-router";
   <main class="container">
     <h1>Decks</h1>
 
-    <RouterLink to="/" class="nav-button">
+    <RouterLink to="/home" class="nav-button">
         Home
     </RouterLink>
   </main>

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import HomeView from "./views/HomeView.vue";
 import CardSearchView from "./views/CardSearchView.vue";
+import CardView from "./views/CardView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,6 +15,10 @@ const router = createRouter({
     {
       path: "/cards",
       component: CardSearchView,
+    },
+    {
+      path: "/cards/:id",
+      component: CardView,
     },
   ],
 });

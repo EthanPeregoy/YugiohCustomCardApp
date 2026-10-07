@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { RouterLink } from "vue-router";
 const searchQuery = ref("");
 
 const cards = ref<any[]>([]);
@@ -85,14 +86,17 @@ async function searchCards(query: string) {
       <div class="card-results">
         <div
           v-for="card in cards"
-          :key="card.passcode"
+          :key="card.id"
+          :to="`/cards/${card.id}`"
           class="card-result"
         >
+          <RouterLink :to="`/cards/${card.id}`" class="card-result-link">
           <img
             :src="card.image_path"
             :alt="card.cardname"
             class="card-image"
           />
+          </RouterLink>
         </div>
       </div>
     </div>

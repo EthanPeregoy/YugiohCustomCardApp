@@ -205,6 +205,68 @@ function getSpellTrapTypes(card: any) {
   return types.join(" / ");
 }
 
+function getMonsterStats(card: any) {
+  if (!card.card_type?.includes("Monster")) {
+    return null;
+  }
+
+  const topStats: string[] = [];
+  const bottomStats: string[] = [];
+
+  const cardType = card.card_type.toLowerCase();
+
+  // Link / Rank / Level
+  if (cardType.includes("link")) {
+    if (card.link_value !== null && card.link_value !== undefined) {
+      topStats.push(`Link ${card.link_value}`);
+    }
+  } 
+  else if (cardType.includes("xyz")) {
+    if (card.level !== null && card.level !== undefined) {
+      topStats.push(`Rank ${card.level}`);
+    }
+  } 
+  else if (card.level !== null && card.level !== undefined) {
+    topStats.push(`Level ${card.level}`);
+  }
+
+  // Attribute
+  if (card.attribute) {
+    topStats.push(card.attribute);
+  }
+
+  // ATK
+  if (card.attack !== null && card.attack !== undefined) {
+    bottomStats.push(`ATK ${card.attack}`);
+  }
+
+  // DEF
+  if (
+    !cardType.includes("link") &&
+    card.defense !== null &&
+    card.defense !== undefined
+  ) {
+    bottomStats.push(`DEF ${card.defense}`);
+  }
+
+  // Pendulum Scale
+  let scale = "";
+
+  if (
+    cardType.includes("pendulum") &&
+    card.scale !== null &&
+    card.scale !== undefined
+  ) {
+    scale = `Scale ${card.scale}`;
+  }
+
+  return {
+    top: topStats.join(" "),
+    scale,
+    bottom: bottomStats.join(" / ")
+  };
+}
+
 onMounted(() => {
   fetchCardDetails();
 });
@@ -232,6 +294,23 @@ onMounted(() => {
       <div class="card-details-info">
 
         <h2>{{ cardDetails.card_name }}</h2>
+
+        <!-- Monster Stats -->
+        <p
+        v-if="cardDetails.card_type?.includes('Monster')"
+        class="card-stats"
+        >
+        [{{ getMonsterStats(cardDetails)?.top }}]
+        </p>
+
+        <p v-if="getMonsterStats(cardDetails)?.scale">
+            {{ getMonsterStats(cardDetails)?.scale }}
+        </p>
+
+        <p v-if="getMonsterStats(cardDetails)?.bottom">
+            {{ getMonsterStats(cardDetails)?.bottom }}
+        </p>
+
 
        <!-- Monster Type -->
         <p
@@ -262,6 +341,7 @@ onMounted(() => {
             {{ effect }}
           </p>
         </div>
+
 
       </div>
 

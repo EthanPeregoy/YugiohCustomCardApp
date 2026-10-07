@@ -351,8 +351,17 @@ onMounted(() => {
       {{ error }}
     </p>
 
-    <RouterLink to="/cards" class="nav-button">
-      Back to Card Search
+    <RouterLink
+        :to="{
+            path: '/cards',
+            query: {
+            search: route.query.search,
+            page: route.query.page
+            }
+        }"
+        class="nav-button"
+        >
+    Back to Card Search
     </RouterLink>
   </main>
 </template>

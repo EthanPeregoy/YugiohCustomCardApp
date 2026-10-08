@@ -7,6 +7,33 @@ const router = useRouter();
 
 const shouldFadeIn = ref(route.query.transition === "login");
 
+const loggingOut = ref(false);
+
+async function logoutUser() {
+  if (loggingOut.value) return;
+
+  loggingOut.value = true;
+
+  try {
+    const response = await fetch("http://localhost:3000/api/auth/logout", {
+      method: "POST",
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to log out");
+    }
+
+    await router.push("/");
+
+  } catch (err) {
+    console.error("Logout error:", err);
+    alert("Could not log out. Please try again.");
+  } finally {
+    loggingOut.value = false;
+  }
+}
+
 onMounted(() => {
   if (shouldFadeIn.value) {
     router.replace("/home");
@@ -37,9 +64,14 @@ onMounted(() => {
     <RouterLink to="/user" class="nav-button">
         User
     </RouterLink>
-    <RouterLink to="/" class="nav-button">
-        Log Out
-    </RouterLink>
+    <button
+        class="nav-button"
+        type="button"
+        :disabled="loggingOut"
+        @click="logoutUser"
+        >
+        {{ loggingOut ? "Logging Out..." : "Log Out" }}
+    </button>
   </main>
 </template>
 

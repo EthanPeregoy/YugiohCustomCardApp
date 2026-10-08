@@ -1,0 +1,34 @@
+main {
+  min-height: 100vh;
+
+  background-image: url("../assets/CosmosBackground.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+.container {
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  margin-top: 2vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+}
+
+.galaxy-background {
+  background-image: url("../assets/GalaxyBackground.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+}

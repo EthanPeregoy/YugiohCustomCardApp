@@ -1,114 +1,20 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+    import { useLoginForm } from "../composables/useLoginForm";
+    import WelcomeTransition from "../components/WelcomeTransition.vue";
 
-const error = ref("");
-const success = ref("");
-const loading = ref(false);
-
-const isTransitioning = ref(false);
-
-const router = useRouter();
-
-const isRegistering = ref(false);
-
-const username = ref("");
-const password = ref("");
-
-function toggleForm() {
-  isRegistering.value = !isRegistering.value;
-
-  username.value = "";
-  password.value = "";
-  error.value = "";
-  success.value = "";
-}
-async function registerUser() {
-    error.value = "";
-    success.value = "";
-    loading.value = true;
-
-    try {
-        const response = await fetch(
-        "http://localhost:3000/api/auth/register",
-        {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({
-            username: username.value,
-            password: password.value,
-            }),
-        }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-        throw new Error(data.error || "Registration failed.");
-        }
-
-        success.value = "Account created successfully! You can now log in.";
-
-        isRegistering.value = false;
-        password.value = "";
-
-    } catch (err) {
-        error.value =
-        err instanceof Error ? err.message : "Registration failed.";
-    } finally {
-        loading.value = false;
-    }
-}
-
-async function loginUser() {
-  error.value = "";
-  success.value = "";
-  loading.value = true;
-
-  try {
-    const response = await fetch(
-      "http://localhost:3000/api/auth/login",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          username: username.value,
-          password: password.value,
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Login failed.");
-    }
-
-    console.log("Logged in user:", data);
-
-    isTransitioning.value = true;
-
-    // Wait 3 seconds before entering Home
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    await router.push({
-    path: "/home",
-    query: { transition: "login" }
-    });
-
-  } catch (err) {
-    error.value =
-      err instanceof Error ? err.message : "Login failed.";
-  } finally {
-    loading.value = false;
-  }
-}
+    const {
+    router,
+    username,
+    password,
+    error,
+    success,
+    loading,
+    isRegistering,
+    isTransitioning,
+    toggleForm,
+    registerUser,
+    loginUser
+    } = useLoginForm();
 </script>
 
 <template>
@@ -190,12 +96,10 @@ async function loginUser() {
       </button>
     </div>
 
-    <Transition name="login-fade">
-        <div v-if="isTransitioning" class="login-transition">
-            <h1>Welcome, {{ username }}</h1>
-            <p>Your journey awaits...</p>
-        </div>
-    </Transition>
+    <WelcomeTransition
+      :username="username"
+      :show="isTransitioning"
+    />
   </main>
 </template>
 
@@ -304,60 +208,5 @@ async function loginUser() {
 .success-message {
   color: #77ffbb;
   margin-top: 1rem;
-}
-
-.login-transition {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  background: rgba(0, 0, 0, 0.97);
-  color: white;
-}
-
-.login-transition h1 {
-  position: static;
-  padding: 0;
-  margin: 0;
-
-  font-size: 2.5rem;
-  text-shadow: 0 0 20px rgba(180, 130, 255, 0.9);
-
-  animation: welcome-glow 2s ease-in-out infinite alternate;
-}
-
-.login-transition p {
-  color: #bbb;
-  margin-top: 1rem;
-  letter-spacing: 2px;
-}
-
-/* Fade in the overlay */
-.login-fade-enter-active {
-  transition: opacity 1s ease-in-out;
-}
-
-.login-fade-enter-from {
-  opacity: 0;
-}
-
-.login-fade-enter-to {
-  opacity: 1;
-}
-
-/* Glowing welcome message */
-@keyframes welcome-glow {
-  from {
-    text-shadow: 0 0 10px rgba(180, 130, 255, 0.4);
-  }
-
-  to {
-    text-shadow: 0 0 30px rgba(180, 130, 255, 1);
-  }
 }
 </style>

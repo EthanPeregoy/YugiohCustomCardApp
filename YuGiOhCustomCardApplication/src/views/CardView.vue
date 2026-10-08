@@ -1,276 +1,23 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRoute, RouterLink } from "vue-router";
+  import { RouterLink } from "vue-router";
 
-const route = useRoute();
+  import { useCardDetails } from "../composables/useCardDetails";
 
-const cardId = route.params.id;
+  import {
+    formatDescription,
+    getMonsterTypes,
+    getSpellTrapTypes
+  } from "../utils/cardFormatting";
 
-const cardDetails = ref<any>(null);
-const loading = ref(true);
-const error = ref("");
-
-async function fetchCardDetails() {
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/cards/${cardId}`
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
-    }
-
-    cardDetails.value = await response.json();
-
-    console.log(cardDetails.value);
-  } catch (err) {
-    console.error(err);
-    error.value = "Could not load card.";
-  } finally {
-    loading.value = false;
-  }
-}
-
-function formatDescription(description: string) {
-  if (!description) {
-    return [];
-  }
-
-  // Put every bullet point onto its own line before processing.
-  description = description.replace(/\s*●\s*/g, "\n● ");
-
-  // Put "During" effects onto a new line.
-  description = description.replace(
-    /\s+(During\s)/g,
-    "\n$1"
-  );
-
-  // Split existing/newly-created lines.
-  const lines = description
-    .split("\n")
-    .map(line => line.trim())
-    .filter(line => line.length > 0);
-
-  const effects: string[] = [];
-
-  for (const line of lines) {
-
-    // Bullet effects always get their own paragraph.
-    if (line.startsWith("●")) {
-      effects.push(line);
-      continue;
-    }
-
-    // Break normal text into sentences.
-    const sentences =
-      line.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
-
-    let currentEffect = "";
-
-    for (const sentence of sentences) {
-      const trimmed = sentence.trim();
-
-      const startsNewEffect =
-        trimmed.startsWith("When ") ||
-        trimmed.startsWith("If ") ||
-        trimmed.startsWith("During ") ||
-        trimmed.startsWith("Once ") ||
-        trimmed.startsWith("You can only activate 1") ||
-        trimmed.startsWith("You can only use each effect ") ||
-        trimmed.startsWith("You can only use 1 ") ||
-        trimmed.startsWith("\"") ||
-        trimmed.startsWith("Reduce ") ||
-        trimmed.startsWith("Increase ") ||
-        trimmed.startsWith("Negate ") ||
-        trimmed.startsWith("Pay ") ||
-        trimmed.startsWith("Banish ") ||
-        trimmed.startsWith("Send ") ||
-        trimmed.startsWith("Destroy ") ||
-        trimmed.startsWith("Discard ") ||
-        trimmed.startsWith("Tribute ") ||
-        trimmed.startsWith("Target ") ||
-        trimmed.startsWith("Choose ") ||
-        trimmed.startsWith("Monsters ") ||
-        trimmed.startsWith("Return ") ||
-        trimmed.startsWith("Reveal ") ||
-        trimmed.startsWith("The first time ");
-
-      if (startsNewEffect && currentEffect) {
-        effects.push(currentEffect.trim());
-        currentEffect = trimmed;
-      } else {
-        currentEffect +=
-          (currentEffect ? " " : "") + trimmed;
-      }
-    }
-
-    if (currentEffect) {
-      effects.push(currentEffect.trim());
-    }
-  }
-
-  return effects;
-}
-
-function hasMonsterEffect(card: any) {
-  if (!card.description) {
-    return false;
-  }
-
-  const formattedText = formatDescription(card.description);
-
-  return formattedText.length > 1;
-}
-
-function getMonsterTypes(card: any) {
-  const types: string[] = [];
-
-  // Zombie, Dragon, Warrior, Fiend, etc.
-  if (card.card_subtype) {
-    types.push(card.card_subtype);
-  }
-
-  if (!card.card_type) {
-    return types.join(" / ");
-  }
-
-  const typeWords: string[] = card.card_type
-    .replace(/\bMonster\b/g, "")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-
-  const extraDeckTypes = [
-    "Fusion",
-    "Synchro",
-    "Xyz",
-    "Link"
-  ];
-
-  // Add types contained directly in card_type.
-  for (const type of typeWords) {
-    if (!types.includes(type)) {
-      types.push(type);
-    }
-  }
-
-  const isExtraDeckMonster = typeWords.some((type: string) =>
-    extraDeckTypes.includes(type)
-  );
-
-  // Add Pendulum if your frame_type identifies it.
-  if (
-    card.frame_type?.toLowerCase().includes("pendulum") &&
-    !types.includes("Pendulum")
-  ) {
-    types.push("Pendulum");
-  }
-
-  // Add Tuner if your data identifies the card as one.
-  if (
-    card.card_type?.includes("Tuner") &&
-    !types.includes("Tuner")
-  ) {
-    types.push("Tuner");
-  }
-
-  // Determine Effect for Extra Deck monsters when the API
-  // doesn't explicitly provide it.
-  if (
-    isExtraDeckMonster &&
-    !types.includes("Effect") &&
-    hasMonsterEffect(card)
-  ) {
-    types.push("Effect");
-  }
-
-  return types.join(" / ");
-}
-
-function getSpellTrapTypes(card: any) {
-  const types: string[] = [];
-
-  if (card.card_type) {
-    const cardType = card.card_type
-      .replace(/\bCard\b/g, "")
-      .trim();
-
-    types.push(cardType);
-  }
-
-  if (card.card_subtype) {
-    types.push(card.card_subtype);
-  }
-
-  return types.join(" / ");
-}
-
-function getMonsterStats(card: any) {
-  if (!card.card_type?.includes("Monster")) {
-    return null;
-  }
-
-  const topStats: string[] = [];
-  const bottomStats: string[] = [];
-
-  const cardType = card.card_type.toLowerCase();
-
-  // Link / Rank / Level
-  if (cardType.includes("link")) {
-    if (card.link_value !== null && card.link_value !== undefined) {
-      topStats.push(`Link ${card.link_value}`);
-    }
-  } 
-  else if (cardType.includes("xyz")) {
-    if (card.level !== null && card.level !== undefined) {
-      topStats.push(`Rank ${card.level}`);
-    }
-  } 
-  else if (card.level !== null && card.level !== undefined) {
-    topStats.push(`Level ${card.level}`);
-  }
-
-  // Attribute
-  if (card.attribute) {
-    topStats.push(card.attribute);
-  }
-
-  // ATK
-  if (card.attack !== null && card.attack !== undefined) {
-    bottomStats.push(`ATK ${card.attack}`);
-  }
-
-  // DEF
-  if (
-    !cardType.includes("link") &&
-    card.defense !== null &&
-    card.defense !== undefined
-  ) {
-    bottomStats.push(`DEF ${card.defense}`);
-  }
-
-  // Pendulum Scale
-  let scale = "";
-
-  if (
-    cardType.includes("pendulum") &&
-    card.scale !== null &&
-    card.scale !== undefined
-  ) {
-    scale = `Scale ${card.scale}`;
-  }
-
-  return {
-    top: topStats.join(" "),
-    scale,
-    bottom: bottomStats.join(" / ")
-  };
-}
-
-onMounted(() => {
-  fetchCardDetails();
-});
+  const {
+    route,
+    cardDetails,
+    loading,
+    error,
+    monsterStats
+  } = useCardDetails();
 </script>
+
 
 <template>
   <main class="container">
@@ -300,15 +47,15 @@ onMounted(() => {
         v-if="cardDetails.card_type?.includes('Monster')"
         class="card-stats"
         >
-        [{{ getMonsterStats(cardDetails)?.top }}]
+        [{{ monsterStats?.top }}]
         </p>
 
-        <p v-if="getMonsterStats(cardDetails)?.scale">
-            {{ getMonsterStats(cardDetails)?.scale }}
+        <p v-if="monsterStats?.scale">
+            {{ monsterStats?.scale }}
         </p>
 
-        <p v-if="getMonsterStats(cardDetails)?.bottom">
-            {{ getMonsterStats(cardDetails)?.bottom }}
+        <p v-if="monsterStats?.bottom">
+            {{ monsterStats?.bottom }}
         </p>
 
 

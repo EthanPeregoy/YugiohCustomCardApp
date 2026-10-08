@@ -1,68 +1,30 @@
 <script setup lang="ts">
-import { RouterLink, useRoute, useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+    import { ref, onMounted } from "vue";
+    import { RouterLink, useRoute, useRouter } from "vue-router";
 
-const route = useRoute();
-const router = useRouter();
+    import { useAuth } from "../composables/useAuth";
 
-const shouldFadeIn = ref(route.query.transition === "login");
+    const route = useRoute();
+    const router = useRouter();
 
-const loggingOut = ref(false);
-const isAdmin = ref(false);
+    const {
+    isAdmin,
+    loggingOut,
+    checkAdmin,
+    logoutUser
+    } = useAuth();
 
-async function logoutUser() {
-  if (loggingOut.value) return;
+    const shouldFadeIn = ref(route.query.transition === "login");
 
-  loggingOut.value = true;
+    onMounted(() => {
+    checkAdmin();
 
-  try {
-    const response = await fetch("http://localhost:3000/api/auth/logout", {
-      method: "POST",
-      credentials: "include"
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to log out");
+    if (shouldFadeIn.value) {
+        router.replace("/home");
     }
-
-    await router.push("/");
-
-  } catch (err) {
-    console.error("Logout error:", err);
-    alert("Could not log out. Please try again.");
-  } finally {
-    loggingOut.value = false;
-  }
-}
-
-async function checkAdmin() {
-  try {
-    const response = await fetch("http://localhost:3000/api/auth/me", {
-      credentials: "include"
     });
-
-    if (!response.ok) {
-      throw new Error("Failed to retrieve user");
-    }
-
-    const user = await response.json();
-
-    isAdmin.value = user.role === "admin";
-  } catch (err) {
-    console.error("Admin check error:", err);
-    isAdmin.value = false;
-  }
-}
-
-onMounted(() => {
-  checkAdmin();
-
-  if (shouldFadeIn.value) {
-    router.replace("/home");
-  }
-});
-
 </script>
+
 
 <template>
   <main class="container"

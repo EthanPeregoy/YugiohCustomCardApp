@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import TitleScreenView from "./views/TitleScreenView.vue";
-import LoginView from "./views/LoginView.vue";
-import HomeView from "./views/HomeView.vue";
-import CardSearchView from "./views/CardSearchView.vue";
-import CardView from "./views/CardView.vue";
-import CardShopView from "./views/CardShop.vue";
-import PackShopView from "./views/PackShop.vue";
-import CollectionView from "./views/Collection.vue";
-import DecksView from "./views/Decks.vue";
-import UserView from "./views/User.vue";
-import PackCreator from "./views/PackCreator.vue";
+import TitleScreenView from "../views/TitleScreenView.vue";
+import LoginView from "../views/LoginView.vue";
+import HomeView from "../views/HomeView.vue";
+import CardSearchView from "../views/CardSearchView.vue";
+import CardView from "../views/CardView.vue";
+import CardShopView from "../views/CardShop.vue";
+import PackShopView from "../views/PackShop.vue";
+import CollectionView from "../views/Collection.vue";
+import DecksView from "../views/Decks.vue";
+import UserView from "../views/User.vue";
+import PackCreator from "../views/PackCreator.vue";
 
 const router = createRouter({
   history: createWebHistory(),

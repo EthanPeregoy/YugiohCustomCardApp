@@ -10,6 +10,7 @@ import PackShopView from "./views/PackShop.vue";
 import CollectionView from "./views/Collection.vue";
 import DecksView from "./views/Decks.vue";
 import UserView from "./views/User.vue";
+import PackCreator from "./views/PackCreator.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -53,7 +54,11 @@ const router = createRouter({
     {
       path: "/decks",
       component: DecksView,
-    }, 
+    },
+    {
+      path: "/pack-creator",
+      component: PackCreator,
+    }
   ],
 });
 

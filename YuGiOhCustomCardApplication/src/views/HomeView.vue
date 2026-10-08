@@ -8,6 +8,7 @@ const router = useRouter();
 const shouldFadeIn = ref(route.query.transition === "login");
 
 const loggingOut = ref(false);
+const isAdmin = ref(false);
 
 async function logoutUser() {
   if (loggingOut.value) return;
@@ -34,11 +35,33 @@ async function logoutUser() {
   }
 }
 
+async function checkAdmin() {
+  try {
+    const response = await fetch("http://localhost:3000/api/auth/me", {
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to retrieve user");
+    }
+
+    const user = await response.json();
+
+    isAdmin.value = user.role === "admin";
+  } catch (err) {
+    console.error("Admin check error:", err);
+    isAdmin.value = false;
+  }
+}
+
 onMounted(() => {
+  checkAdmin();
+
   if (shouldFadeIn.value) {
     router.replace("/home");
   }
 });
+
 </script>
 
 <template>
@@ -63,6 +86,13 @@ onMounted(() => {
     </RouterLink>
     <RouterLink to="/user" class="nav-button">
         User
+    </RouterLink>
+    <RouterLink
+        v-if="isAdmin"
+        to="/pack-creator"
+        class="nav-button"
+        >
+        Create Pack
     </RouterLink>
     <button
         class="nav-button"

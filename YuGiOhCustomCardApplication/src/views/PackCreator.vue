@@ -6,6 +6,7 @@ import CardSlotSettings from "../components/packCreator/CardSlotSettings.vue";
 import ConditionalRules from "../components/packCreator/ConditionalRules.vue";
 import CardPoolManager from "../components/packCreator/CardPoolManager.vue";
 import PackSimulator from "../components/packCreator/PackSimulator.vue";
+import PackArtworkEditor from "../components/packCreator/PackArtworkEditor.vue";
 
 import "../styles/pack-creator.css";
 
@@ -56,6 +57,10 @@ const {
         v-model:pack-price="packPrice"
         v-model:cards-per-pack="cardsPerPack"
         @update-card-count="updateCardCount"
+      />
+
+      <PackArtworkEditor 
+      v-model:pack-name="packName" 
       />
 
       <!-- Card Slot Settings -->

@@ -42,6 +42,28 @@ const backDestination = computed(() => {
       : "/cards";
   }
 
+  // Pack Details should return to Pack Shop
+  if (route.matched.some(record => record.path === "/packs/:id")) {
+    const search = route.query.search;
+    const page = route.query.page;
+
+    const params = new URLSearchParams();
+
+    if (typeof search === "string" && search) {
+      params.set("search", search);
+    }
+
+    if (typeof page === "string" && page) {
+      params.set("page", page);
+    }
+
+    const queryString = params.toString();
+
+    return queryString
+      ? `/packs?${queryString}`
+      : "/packs";
+  }
+
   // Every other page returns Home
   return "/home";
 });

@@ -11,6 +11,7 @@ import CollectionView from "../views/Collection.vue";
 import DecksView from "../views/Decks.vue";
 import UserView from "../views/User.vue";
 import PackCreator from "../views/PackCreator.vue";
+import PackDetailsView from "../views/PackDetails.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -58,6 +59,10 @@ const router = createRouter({
     {
       path: "/pack-creator",
       component: PackCreator,
+    },
+    {
+      path: "/packs/:id",
+      component: PackDetailsView,
     }
   ],
 });

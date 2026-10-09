@@ -4,7 +4,6 @@ import TitleScreenView from "../views/TitleScreenView.vue";
 import LoginView from "../views/LoginView.vue";
 import HomeView from "../views/HomeView.vue";
 import CardSearchView from "../views/CardSearchView.vue";
-import CardView from "../views/CardView.vue";
 import CardShopView from "../views/CardShop.vue";
 import PackShopView from "../views/PackShop.vue";
 import CollectionView from "../views/Collection.vue";
@@ -31,10 +30,6 @@ const router = createRouter({
     {
       path: "/cards",
       component: CardSearchView,
-    },
-    {
-      path: "/cards/:id",
-      component: CardView,
     },
     {
       path: "/user",

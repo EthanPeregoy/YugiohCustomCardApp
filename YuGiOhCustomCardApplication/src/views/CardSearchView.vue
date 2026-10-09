@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { RouterLink } from "vue-router";
+  import { ref, nextTick } from "vue";
   import { useCardSearch } from "../composables/useCardSearch";
-  import { nextTick } from "vue";
+  import CardDetailsModal from "../components/CardDetailsModal.vue";
 
   const {
     searchQuery,
@@ -16,6 +16,16 @@
     nextPage,
     previousPage,
   } = useCardSearch();
+
+  const selectedCardId = ref<number | null>(null);
+
+  function openCard(cardId: number) {
+    selectedCardId.value = cardId;
+  }
+
+  function closeCard() {
+    selectedCardId.value = null;
+  }
 
   async function changePage(direction: "next" | "previous") {
     if (direction === "next") {
@@ -105,22 +115,17 @@
           :key="card.id"
           class="card-result"
         >
-          <RouterLink
-            :to="{
-              path: `/cards/${card.id}`,
-              query: {
-                search: searchQuery || undefined,
-                page: currentPage
-              }
-            }"
-            class="card-result-link"
+          <button
+            type="button"
+            class="card-result-link card-select-button"
+            @click="openCard(card.id)"
           >
             <img
               :src="card.image_path"
               :alt="card.cardname"
               class="card-image"
             />
-          </RouterLink>
+          </button>
         </div>
       </div>
 
@@ -147,5 +152,10 @@
       </div>
     </div>
     </div>
+
+    <CardDetailsModal
+      :card-id="selectedCardId"
+      @close="closeCard"
+    />
   </main>
 </template>

@@ -203,3 +203,18 @@
   color: #bda5dc;
   font-size: 14px;
 }
+
+.card-select-button {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.card-select-button:focus-visible {
+  outline: 3px solid #d7b8ff;
+  outline-offset: 3px;
+}

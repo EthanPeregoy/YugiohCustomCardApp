@@ -20,28 +20,6 @@ const showBackButton = computed(() => {
 
 // Determine where the back button should lead
 const backDestination = computed(() => {
-  // Card View should return to Card Search
-  if (route.matched.some(record => record.path === "/cards/:id")) {
-    const search = route.query.search;
-    const page = route.query.page;
-
-    const params = new URLSearchParams();
-
-    if (typeof search === "string" && search) {
-      params.set("search", search);
-    }
-
-    if (typeof page === "string" && page) {
-      params.set("page", page);
-    }
-
-    const queryString = params.toString();
-
-    return queryString
-      ? `/cards?${queryString}`
-      : "/cards";
-  }
-
   // Pack Details should return to Pack Shop
   if (route.matched.some(record => record.path === "/packs/:id")) {
     const search = route.query.search;

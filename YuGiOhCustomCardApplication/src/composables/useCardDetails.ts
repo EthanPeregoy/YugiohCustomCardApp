@@ -1,9 +1,9 @@
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, toValue, type MaybeRefOrGetter } from "vue";
 import { useRoute } from "vue-router";
 import { getCardById } from "../services/cardService";
 import { getMonsterStats } from "../utils/cardFormatting";
 
-export function useCardDetails() {
+export function useCardDetails(cardId?: MaybeRefOrGetter<string | number | null>) {
   const route = useRoute();
   const cardDetails = ref<any>(null);
   const loading = ref(true);
@@ -44,10 +44,13 @@ export function useCardDetails() {
   });
 
   watch(
-    () => route.params.id,
+    () => cardId === undefined ? route.params.id : toValue(cardId),
     (id) => {
-      if (typeof id === "string") {
-        fetchCardDetails(id);
+      if (
+        (typeof id === "string" && id.length > 0) ||
+        (typeof id === "number" && Number.isFinite(id))
+      ) {
+        fetchCardDetails(String(id));
       } else {
         requestId++;
         cardDetails.value = null;

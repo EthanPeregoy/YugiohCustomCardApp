@@ -1,20 +1,26 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
+    import { useRouter } from "vue-router";
 
-const router = useRouter();
+    const router = useRouter();
 
-const props = withDefaults(
-  defineProps<{
-    destination?: string;
-  }>(),
-  {
-    destination: "/home"
-  }
-);
+    const props = withDefaults(
+    defineProps<{
+        destination?: string;
+        useHistory?: boolean;
+    }>(),
+    {
+        destination: "/home",
+        useHistory: false
+    }
+    );
 
-function goBack() {
-  router.push(props.destination);
-}
+    function goBack() {
+    if (props.useHistory && window.history.state?.back) {
+        router.back();
+    } else {
+        router.push(props.destination);
+    }
+    }
 </script>
 
 <template>

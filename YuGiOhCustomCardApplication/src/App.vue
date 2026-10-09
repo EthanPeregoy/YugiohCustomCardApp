@@ -22,7 +22,24 @@ const showBackButton = computed(() => {
 const backDestination = computed(() => {
   // Card View should return to Card Search
   if (route.matched.some(record => record.path === "/cards/:id")) {
-    return "/cards";
+    const search = route.query.search;
+    const page = route.query.page;
+
+    const params = new URLSearchParams();
+
+    if (typeof search === "string" && search) {
+      params.set("search", search);
+    }
+
+    if (typeof page === "string" && page) {
+      params.set("page", page);
+    }
+
+    const queryString = params.toString();
+
+    return queryString
+      ? `/cards?${queryString}`
+      : "/cards";
   }
 
   // Every other page returns Home

@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-import { rarities, type CardSlot } from "../types/pack";
+import { type CardSlot } from "../types/pack";
 
 export function useCardSlots() {
   const cardsPerPack = ref(5);

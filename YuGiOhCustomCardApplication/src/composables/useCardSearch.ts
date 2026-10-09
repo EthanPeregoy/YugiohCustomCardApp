@@ -1,4 +1,4 @@
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getAllCards, searchCardsByName } from "../services/cardService";
 
@@ -16,19 +16,60 @@ export function useCardSearch() {
   const loading = ref(true);
   const error = ref("");
 
-  const cardsPerPage = 30;
+  const cardsPerPage = ref(30);
+  
+  const galleryElement = ref<HTMLElement | null>(null);
+
+  const cardMinWidth = 160;
+  const cardGap = 24;
+  const rowsPerPage = 4;
+
+  let resizeObserver: ResizeObserver | null = null;
+
+  function updateCardsPerPage() {
+    if (!galleryElement.value) return;
+
+    const galleryWidth = galleryElement.value.clientWidth;
+
+    const columns = Math.max(
+      1,
+      Math.floor(
+        (galleryWidth + cardGap) / (cardMinWidth + cardGap)
+      )
+    );
+
+    const newCardsPerPage = columns * rowsPerPage;
+
+    if (newCardsPerPage === cardsPerPage.value) return;
+
+    const firstCardIndex =
+      (currentPage.value - 1) * cardsPerPage.value;
+
+    cardsPerPage.value = newCardsPerPage;
+
+    currentPage.value = Math.min(
+      Math.floor(firstCardIndex / newCardsPerPage) + 1,
+      totalPages.value
+    );
+
+    updateSearchURL();
+  }
 
   const currentPage = ref(
     Math.max(1, Number(route.query.page) || 1)
   );
 
   const totalPages = computed(() =>
-    Math.max(1, Math.ceil(cards.value.length / cardsPerPage))
+    Math.max(1, Math.ceil(cards.value.length / cardsPerPage.value))
   );
 
   const paginatedCards = computed(() => {
-    const start = (currentPage.value - 1) * cardsPerPage;
-    return cards.value.slice(start, start + cardsPerPage);
+    const start = (currentPage.value - 1) * cardsPerPage.value;
+
+    return cards.value.slice(
+      start,
+      start + cardsPerPage.value
+    );
   });
 
   function updateSearchURL() {
@@ -88,10 +129,27 @@ export function useCardSearch() {
     }
   }
 
+  watch(galleryElement, (element) => {
+    resizeObserver?.disconnect();
+    resizeObserver = null;
+
+    if (!element) return;
+
+    resizeObserver = new ResizeObserver(() => {
+      updateCardsPerPage();
+    });
+
+    resizeObserver.observe(element);
+    updateCardsPerPage();
+  });
+
   onMounted(() => {
     searchCards(searchQuery.value, false);
   });
 
+  onBeforeUnmount(() => {
+    resizeObserver?.disconnect();
+  });
   return {
     searchQuery,
     cards,
@@ -100,6 +158,7 @@ export function useCardSearch() {
     currentPage,
     totalPages,
     paginatedCards,
+    galleryElement,
     searchCards,
     nextPage,
     previousPage,

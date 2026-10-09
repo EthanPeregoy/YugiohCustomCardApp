@@ -74,20 +74,32 @@ function updatePreview() {
   );
 }
 
-function exportArtwork() {
-  if (!canvas.value || !loadedImage.value) return;
+async function getArtworkFile(): Promise<File> {
+  if (!canvas.value || !loadedImage.value) {
+    throw new Error("Please upload pack artwork before saving.");
+  }
 
-  const link = document.createElement("a");
+  // Ensure the canvas contains the latest artwork settings.
+  updatePreview();
 
-  link.download =
-    `${props.packName.trim() || "Custom Pack"}.png`;
+  const blob = await new Promise<Blob>((resolve, reject) => {
+    canvas.value!.toBlob(
+      result => {
+        if (result) {
+          resolve(result);
+        } else {
+          reject(new Error("Failed to generate pack artwork."));
+        }
+      },
+      "image/png"
+    );
+  });
 
-  link.href = canvas.value.toDataURL("image/png");
-  link.click();
-}
-
-function resetSettings() {
-  settings.value = { ...defaultPackArtworkSettings };
+  return new File(
+    [blob],
+    `${props.packName.trim() || "Custom Pack"}.png`,
+    { type: "image/png" }
+  );
 }
 
 watch(
@@ -100,6 +112,10 @@ onBeforeUnmount(() => {
   if (artworkPreview.value) {
     URL.revokeObjectURL(artworkPreview.value);
   }
+});
+
+defineExpose({
+  getArtworkFile
 });
 </script>
 
@@ -148,6 +164,7 @@ onBeforeUnmount(() => {
                 <label>Font</label>
 
                 <select v-model="settings.fontFamily">
+                  <option value="Cinzel">Cinzel</option>
                   <option value="Georgia">Georgia</option>
                   <option value="Arial">Arial</option>
                   <option value="Verdana">Verdana</option>
@@ -340,27 +357,7 @@ onBeforeUnmount(() => {
                 class="setting-number"
               />
             </div>
-          </div>
-
-          <!-- ACTIONS -->
-          <div class="editor-actions">
-            <button
-              type="button"
-              class="reset-button"
-              @click="resetSettings"
-            >
-              Reset Settings
-            </button>
-
-            <button
-              type="button"
-              class="export-button"
-              @click="exportArtwork"
-            >
-              Export Pack Artwork
-            </button>
-          </div>
-
+          </div>          
         </template>
       </div>
 
@@ -393,6 +390,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .pack-artwork-editor {
   margin-top: 30px;
+  margin-bottom: 30px;
   padding: 20px;
   box-sizing: border-box;
 

@@ -26,6 +26,20 @@
           slot => slot.position === props.selectedSlot
         )
     );
+
+    function updateProbability(rarity: string, event: Event) {
+      if (!currentSlot.value) return;
+
+      const input = event.target as HTMLInputElement;
+
+      const value = input.value === ""
+        ? 0
+        : Number(input.value);
+
+      currentSlot.value.probabilities[
+        rarity as keyof typeof currentSlot.value.probabilities
+      ] = value;
+    }
 </script>
 
 <template>
@@ -59,11 +73,12 @@
       <label>{{ rarity }}</label>
 
       <input
-        v-model.number="currentSlot.probabilities[rarity]"
-        type="number"
-        min="0"
-        max="100"
-        step="0.01"/>
+      type="number"
+      :value="currentSlot.probabilities[rarity]"
+      min="0"
+      max="100"
+      step="0.01"
+      @input="updateProbability(rarity, $event)"/>
 
       <span>%</span>
     </div>

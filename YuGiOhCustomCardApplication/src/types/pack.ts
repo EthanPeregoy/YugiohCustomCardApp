@@ -10,8 +10,8 @@ export type RarityProbabilities = Record<Rarity, number>;
 export type ConditionalRule = {
   id: string;
   dependsOnSlot: number;
-  triggerRarities: Rarity[];
-  probabilities: RarityProbabilities;
+  conditionRarity: Rarity;
+  resultRarity: Rarity;
 };
 
 export type CardSlot = {

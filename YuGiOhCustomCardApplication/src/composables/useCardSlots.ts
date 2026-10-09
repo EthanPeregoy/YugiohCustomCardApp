@@ -38,9 +38,8 @@ export function useCardSlots() {
   const totalProbability = computed(() => {
     if (!currentSlot.value) return 0;
 
-    return rarities.reduce((total, rarity) => {
-      return total + currentSlot.value!.probabilities[rarity];
-    }, 0);
+    return Object.values(currentSlot.value.probabilities)
+      .reduce((sum, value) => sum + Number(value || 0), 0);
   });
 
   function selectSlot(slot: number) {
@@ -103,7 +102,6 @@ export function useCardSlots() {
 
   function addConditionalRule() {
     const slot = currentSlot.value;
-
     if (!slot) return;
 
     const otherSlot = cardSlots.value.find(
@@ -118,14 +116,8 @@ export function useCardSlots() {
     slot.conditions.push({
       id: crypto.randomUUID(),
       dependsOnSlot: otherSlot.position,
-      triggerRarities: ["Super Rare"],
-      probabilities: {
-        "Common": 0,
-        "Rare": 100,
-        "Super Rare": 0,
-        "Ultra Rare": 0,
-        "Secret Rare": 0
-      }
+      conditionRarity: "Super Rare",
+      resultRarity: "Rare"
     });
   }
 

@@ -69,24 +69,21 @@ function rollRarity(
   );
 }
 
-function getEffectiveProbabilities(
+function getEffectiveRarity(
   slot: CardSlot,
   rolledRarities: Map<number, Rarity>
-): RarityProbabilities {
+): Rarity {
   for (const rule of slot.conditions) {
     const dependencyRarity = rolledRarities.get(
       rule.dependsOnSlot
     );
 
-    if (
-      dependencyRarity &&
-      rule.triggerRarities.includes(dependencyRarity)
-    ) {
-      return rule.probabilities;
+    if (dependencyRarity === rule.conditionRarity) {
+      return rule.resultRarity;
     }
   }
 
-  return slot.probabilities;
+  return rollRarity(slot.probabilities);
 }
 
 function generatePackRarities(
@@ -135,12 +132,10 @@ function generatePackRarities(
         rollSlot(rule.dependsOnSlot);
       }
 
-      const probabilities = getEffectiveProbabilities(
+      const rarity = getEffectiveRarity(
         slot,
         rolledRarities
       );
-
-      const rarity = rollRarity(probabilities);
 
       rolledRarities.set(position, rarity);
 
@@ -190,21 +185,20 @@ export function simulatePack(
 
     for (const [index, rule] of slot.conditions.entries()) {
       if (
-        rule.triggerRarities.length === 0 ||
-        rule.triggerRarities.some(
-          rarity => !rarities.includes(rarity)
-        )
+        !rarities.includes(rule.conditionRarity) ||
+        !rarities.includes(rule.resultRarity)
       ) {
         throw new Error(
-          `Card ${slot.position}, Rule ${index + 1} needs valid trigger rarities.`
+          `Card ${slot.position}, Rule ${index + 1} has an invalid rarity.`
         );
       }
 
-      validateProbabilities(
-        rule.probabilities,
-        `Card ${slot.position}, Rule ${index + 1}`,
-        cardPools
-      );
+
+      if (cardPools[rule.resultRarity].length === 0) {
+        throw new Error(
+          `Card ${slot.position}, Rule ${index + 1} requires ${rule.resultRarity}, but its card pool is empty.`
+        );
+      }
     }
   }
 

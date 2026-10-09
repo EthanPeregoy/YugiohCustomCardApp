@@ -1,73 +1,117 @@
+
 <script setup lang="ts">
-    import { ref, onMounted } from "vue";
-    import { RouterLink, useRoute, useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 
-    import { useAuth } from "../composables/useAuth";
+import { useAuth } from "../composables/useAuth";
 
-    const route = useRoute();
-    const router = useRouter();
+const route = useRoute();
+const router = useRouter();
 
-    const {
-    isAdmin,
-    loggingOut,
-    checkAdmin,
-    logoutUser
-    } = useAuth();
+const {
+  isAdmin,
+  loggingOut,
+  checkAdmin,
+  logoutUser
+} = useAuth();
 
-    const shouldFadeIn = ref(route.query.transition === "login");
+const shouldFadeIn = ref(route.query.transition === "login");
 
-    onMounted(() => {
-    checkAdmin();
+onMounted(() => {
+  checkAdmin();
 
-    if (shouldFadeIn.value) {
-        router.replace("/home");
-    }
-    });
+  if (shouldFadeIn.value) {
+    router.replace("/home");
+  }
+});
 </script>
 
-
 <template>
-  <main class="container"
-  :class="{ 'home-screen': shouldFadeIn }">
-    <h1>Welcome Duelist!</h1>
+  <main
+    class="home-container"
+    :class="{ 'home-screen': shouldFadeIn }"
+  >
+    <!-- Logout Button -->
+    <button
+      class="logout-button"
+      type="button"
+      :disabled="loggingOut"
+      :title="loggingOut ? 'Logging Out...' : 'Log Out'"
+      aria-label="Log Out"
+      @click="logoutUser"
+    >
+      &times;
+    </button>
 
-    <RouterLink to="/cards" class="nav-button">
-        Card Search
-    </RouterLink>
-    <RouterLink to="/shop" class="nav-button">
-        Card Shop
-    </RouterLink>
-    <RouterLink to="/packs" class="nav-button">
-        Pack Shop
-    </RouterLink>
-    <RouterLink to="/collection" class="nav-button">
-        Collection
-    </RouterLink>
-    <RouterLink to="/decks" class="nav-button">
-        Decks
-    </RouterLink>
-    <RouterLink to="/user" class="nav-button">
-        User
-    </RouterLink>
-    <RouterLink
+    <!-- Title -->
+    <header class="home-header">
+      <h1 class="home-title">Welcome Duelist!</h1>
+
+      <div class="title-divider">
+        <span class="divider-diamond"></span>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="home-navigation">
+      <div class="navigation-grid">
+        <RouterLink to="/cards" class="home-button">
+          Card Search
+        </RouterLink>
+
+        <RouterLink to="/shop" class="home-button">
+          Card Shop
+        </RouterLink>
+
+        <RouterLink to="/packs" class="home-button">
+          Pack Shop
+        </RouterLink>
+
+        <RouterLink to="/collection" class="home-button">
+          Collection
+        </RouterLink>
+
+        <RouterLink to="/decks" class="home-button">
+          Decks
+        </RouterLink>
+
+        <RouterLink to="/user" class="home-button">
+          User
+        </RouterLink>
+      </div>
+
+      <!-- Admin Only -->
+      <RouterLink
         v-if="isAdmin"
         to="/pack-creator"
-        class="nav-button"
-        >
+        class="home-button admin-button"
+      >
         Create Pack
-    </RouterLink>
-    <button
-        class="nav-button"
-        type="button"
-        :disabled="loggingOut"
-        @click="logoutUser"
-        >
-        {{ loggingOut ? "Logging Out..." : "Log Out" }}
-    </button>
+      </RouterLink>
+    </nav>
   </main>
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&display=swap');
+
+/* Main Layout */
+.home-container {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 55px 40px 35px;
+  position: relative;
+}
+
+/* Login Transition */
 .home-screen {
   animation: home-fade-in 1.5s ease-in-out both;
 }
@@ -82,4 +126,214 @@
   }
 }
 
+/* Title */
+.home-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  text-align: center;
+
+  color: #f4eaff;
+  margin: 0;
+
+  text-shadow:
+    0 0 10px #a56bff,
+    0 0 25px #8a42ff,
+    0 0 45px #6522cc;
+}
+
+/* Decorative Divider */
+.title-divider {
+  width: min(75%, 850px);
+  height: 2px;
+  margin-top: 18px;
+
+  background: linear-gradient(
+    to right,
+    transparent,
+    #c69aff,
+    #ffffff,
+    #c69aff,
+    transparent
+  );
+
+  box-shadow: 0 0 12px #a56bff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.divider-diamond {
+  width: 18px;
+  height: 18px;
+  background: #e4caff;
+
+  transform: rotate(45deg);
+
+  box-shadow:
+    0 0 12px #ffffff,
+    0 0 25px #a56bff;
+}
+
+/* Navigation Layout */
+.home-navigation {
+  width: 100%;
+  max-width: 1150px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.navigation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+
+  width: 100%;
+}
+
+/* Navigation Buttons */
+.home-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 65px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.85rem, 1.7vw, 1.4rem);
+  font-weight: 700;
+
+  color: #f4eaff;
+  text-align: center;
+  text-decoration: none;
+
+  background: rgba(5, 3, 18, 0.92);
+
+  border: 2px solid #b99aff;
+  border-radius: 10px;
+
+  box-shadow:
+    0 0 8px #8a42ff,
+    inset 0 0 10px rgba(138, 66, 255, 0.25);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.home-button:hover {
+  transform: translateY(-3px);
+
+  background: rgba(55, 25, 100, 0.95);
+
+  box-shadow:
+    0 0 15px #a56bff,
+    0 0 30px rgba(138, 66, 255, 0.7);
+}
+
+.home-button:focus-visible,
+.logout-button:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 4px;
+}
+
+/* Admin Button */
+.admin-button {
+  width: min(100%, 350px);
+}
+
+/* Logout Button */
+.logout-button {
+  position: absolute;
+  top: 20px;
+  left: 25px;
+
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 42px;
+  font-weight: bold;
+  line-height: 1;
+
+  color: #ff5555;
+  background: rgba(20, 0, 0, 0.85);
+
+  border: 2px solid #ff5555;
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.5);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.logout-button:hover {
+  transform: scale(1.1);
+
+  box-shadow:
+    0 0 15px #ff3333,
+    0 0 30px rgba(255, 0, 0, 0.6);
+}
+
+.logout-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Smaller Windows */
+@media (max-width: 650px) {
+  .home-container {
+    padding: 90px 15px 25px;
+  }
+
+  .navigation-grid {
+    gap: 8px;
+  }
+
+  .home-button {
+    min-height: 55px;
+    padding: 8px 5px;
+    font-size: 0.75rem;
+  }
+
+  .home-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-height: 650px) {
+  .home-container {
+    padding-top: 35px;
+    padding-bottom: 15px;
+  }
+
+  .home-button {
+    min-height: 45px;
+  }
+
+  .home-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+  }
+}
 </style>

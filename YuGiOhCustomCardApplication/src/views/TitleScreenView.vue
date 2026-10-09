@@ -1,3 +1,4 @@
+
 <script setup lang="ts">
 import { useTitleScreen } from "../composables/useTitleScreen";
 import WelcomeTransition from "../components/WelcomeTransition.vue";
@@ -11,23 +12,32 @@ const {
 </script>
 
 <template>
-  <main
-    class="title-screen galaxy-background"
-  >
+  <main class="title-screen galaxy-background">
     <div class="title-content">
-        <div class="game-title">
-            <h1>Yu-Gi-Oh!</h1>
-            <h2>The Shadow's Light</h2>
-        </div>
 
-        <button
-            class="start-button"
-            :disabled="checkingSession"
-            @click="startApp"
-            >
-            {{ checkingSession ? "CONNECTING..." : "CLICK TO START" }}
-        </button>
+      <!-- Game Title -->
+      <div class="game-title">
+        <h1>Yu-Gi-Oh!</h1>
+        <h2>The Shadow's Light</h2>
+
+        <!-- Decorative Divider -->
+        <div class="title-divider">
+          <span class="divider-diamond"></span>
+        </div>
+      </div>
+
+      <!-- Start Button -->
+      <button
+        class="start-button"
+        type="button"
+        :disabled="checkingSession"
+        @click="startApp"
+      >
+        {{ checkingSession ? "CONNECTING..." : "CLICK TO START" }}
+      </button>
+
     </div>
+
     <WelcomeTransition
       :username="username"
       :show="isTransitioning"
@@ -36,6 +46,9 @@ const {
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&display=swap');
+
+/* Main Title Screen */
 .title-screen {
   position: fixed;
   inset: 0;
@@ -48,87 +61,197 @@ const {
   align-items: center;
 }
 
+/* Centered Content */
 .title-content {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
+/* Game Title */
+
 .game-title {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+
+  padding: 30px 20px;
+
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.25) 45%,
+    transparent 75%
+  );
 }
+
+
 
 .game-title h1 {
   margin: 0;
-  font-size: 5rem;
-  line-height: 1;
 
-  color: white;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 900;
+  line-height: 1.2;
 
+  color: #fff2b3;
+
+  
   text-shadow:
-    0 0 8px black,
-    0 0 16px black,
-    0 0 30px rgba(0, 0, 0, 0.9);
+    2px 2px 3px #000000,
+    -2px -2px 3px #000000,
+    2px -2px 3px #000000,
+    -2px 2px 3px #000000,
+    0 0 8px #000000,
+    0 0 15px #000000,
+    0 0 25px #ffd700,
+    0 0 40px #b8860b;
 }
 
 .game-title h2 {
-  margin: 0.75rem 0 0;
-  font-size: 2rem;
+  margin: 0.5rem 0 0;
 
-  color: white;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.2rem, 3vw, 2.2rem);
+  font-weight: 700;
 
+  color: #ffe8a3;
+
+  
   text-shadow:
-    0 0 6px black,
-    0 0 14px black;
+    2px 2px 2px #000000,
+    -2px -2px 2px #000000,
+    2px -2px 2px #000000,
+    -2px 2px 2px #000000,
+    0 0 8px #000000,
+    0 0 15px #000000,
+    0 0 20px #b8860b;
+
 }
+
+/* Decorative Divider */
+
+.title-divider {
+  width: min(75%, 650px);
+  height: 2px;
+  margin-top: 30px;
+
+  background: linear-gradient(
+    to right,
+    transparent,
+    #b8860b,
+    #fff2b3,
+    #b8860b,
+    transparent
+  );
+
+  box-shadow: 0 0 12px #ffd700;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.divider-diamond {
+  width: 18px;
+  height: 18px;
+
+  background: #ffe8a3;
+  transform: rotate(45deg);
+
+  box-shadow:
+    0 0 12px #ffffff,
+    0 0 25px #ffd700;
+}
+
 
 .start-button {
   margin-top: 6rem;
-  padding: 0.8rem 2.5rem;
+  padding: 15px 40px;
 
-  background: rgba(0, 0, 0, 0.45);
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: 0.1rem;
 
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
+  color: #fff2b3;
+  background: rgba(15, 10, 3, 0.92);
 
-  color: white;
-  font-size: 1.4rem;
-  font-weight: bold;
-  letter-spacing: 0.15rem;
-
-  text-shadow: 0 0 8px black;
-
-  box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.3),
-    inset 0 0 10px rgba(255, 255, 255, 0.1);
+  border: 2px solid #d4af37;
+  border-radius: 10px;
 
   cursor: pointer;
 
-  animation: pulse 1.5s ease-in-out infinite;
+  box-shadow:
+    0 0 8px #b8860b,
+    inset 0 0 10px rgba(255, 215, 0, 0.25);
+
+  animation: pulse 2.5s ease-in-out infinite;
 
   transition:
-    background 0.2s,
-    box-shadow 0.2s,
-    transform 0.2s;
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
-.start-button:hover {
-  background: rgba(0, 0, 0, 0.85);
+.start-button:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.05);
+
+  background: rgba(85, 55, 10, 0.95);
 
   box-shadow:
-    0 0 15px rgba(255, 255, 255, 0.7),
-    0 0 30px rgba(255, 255, 255, 0.3);
-
-  transform: scale(1.05);
+    0 0 15px #ffd700,
+    0 0 30px rgba(255, 215, 0, 0.7);
 }
 
+
+/* Disabled Button */
+.start-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  animation: none;
+}
+
+/* Keyboard Focus */
+.start-button:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 4px;
+}
+
+/* Subtle Pulse Animation */
 @keyframes pulse {
   0%, 100% {
-    opacity: 1;
+    box-shadow:
+      0 0 8px #b8860b,
+      inset 0 0 10px rgba(255, 215, 0, 0.25);
   }
 
   50% {
-    opacity: 0.65;
+    box-shadow:
+      0 0 18px #ffd700,
+      0 0 30px rgba(255, 215, 0, 0.5),
+      inset 0 0 15px rgba(255, 215, 0, 0.35);
+  }
+}
+
+/* Smaller Windows */
+@media (max-width: 650px) {
+  .game-title h1 {
+    font-size: 2.8rem;
+  }
+
+  .game-title h2 {
+    font-size: 1.3rem;
+  }
+
+  .start-button {
+    margin-top: 4rem;
   }
 }
 </style>

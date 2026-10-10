@@ -1,0 +1,88 @@
+
+/* Shop card gallery */
+.card-results {
+  display: grid;
+  gap: 20px;
+  padding: 20px;
+  align-items: stretch;
+}
+
+/* Individual shop card */
+.shop-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 15px 10px;
+  border-radius: 12px;
+
+  background: rgba(30, 18, 50, 0.8);
+  border: 1px solid rgba(170, 110, 255, 0.25);
+
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.shop-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(170, 110, 255, 0.75);
+}
+
+/* Card image button */
+.shop-card .card-select-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* Card image */
+.shop-card .card-image {
+  display: block;
+  width: 100%;
+  max-width: 135px;
+  height: auto;
+
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+/* Rarity and price */
+.shop-card-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  width: 100%;
+  margin-top: 12px;
+
+  text-align: center;
+  color: #d6b8ff;
+  font-size: 13px;
+}
+
+.shop-card-info strong {
+  color: #ffd76a;
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+/* Smaller screens */
+@media (max-width: 600px) {
+  .card-results {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .shop-card {
+    padding: 10px 6px;
+  }
+
+  .shop-card .card-image {
+    max-width: 120px;
+  }
+}

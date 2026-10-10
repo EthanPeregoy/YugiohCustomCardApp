@@ -46,8 +46,8 @@
     <header class="home-header">
       <h1 class="home-title">Welcome Duelist!</h1>
 
-      <div class="title-divider">
-        <span class="divider-diamond"></span>
+      <div class="home-divider">
+        <span class="home-divider-diamond"></span>
       </div>
     </header>
 

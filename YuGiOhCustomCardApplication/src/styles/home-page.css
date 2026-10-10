@@ -52,7 +52,7 @@
 }
 
 /* Decorative Divider */
-.title-divider {
+.home-divider {
   width: min(75%, 850px);
   height: 2px;
   margin-top: 18px;
@@ -73,7 +73,7 @@
   align-items: center;
 }
 
-.divider-diamond {
+.home-divider-diamond {
   width: 18px;
   height: 18px;
   background: #e4caff;

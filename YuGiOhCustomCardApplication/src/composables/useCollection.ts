@@ -1,16 +1,5 @@
-
-import {
-  ref,
-  computed,
-  onMounted,
-  onBeforeUnmount,
-  watch
-} from "vue";
-
-import {
-  getCollection,
-  type CollectionCard
-} from "../services/collectionService";
+import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
+import { getCollection, type CollectionCard } from "../services/collectionService";
 
 export function useCollection() {
   const collection = ref<CollectionCard[]>([]);
@@ -37,6 +26,8 @@ export function useCollection() {
   const cardMinWidth = 160;
   const cardGap = 24;
   const rowsPerPage = 4;
+
+  const selectedCardId = ref<number | null>(null);
 
   let resizeObserver: ResizeObserver | null = null;
 
@@ -87,6 +78,14 @@ export function useCollection() {
     );
   }
 
+  function openCard(cardId: number) {
+    selectedCardId.value = cardId;
+  }
+
+  function closeCard() {
+    selectedCardId.value = null;
+  }
+
   function nextPage() {
     if (currentPage.value < totalPages.value) {
       currentPage.value++;
@@ -97,6 +96,21 @@ export function useCollection() {
     if (currentPage.value > 1) {
       currentPage.value--;
     }
+  }
+
+  async function changePage(direction: "next" | "previous") {
+    if (direction === "next") {
+      nextPage();
+    } else {
+      previousPage();
+    }
+
+    await nextTick();
+
+    document.getElementById("collection-gallery")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
   }
 
   // Reset pagination whenever search changes
@@ -145,6 +159,7 @@ export function useCollection() {
 
   return {
     collection,
+    selectedCardId,
     filteredCollection,
     paginatedCollection,
     searchQuery,
@@ -153,8 +168,9 @@ export function useCollection() {
     currentPage,
     totalPages,
     galleryElement,
-    nextPage,
-    previousPage,
-    loadCollection
+    changePage,
+    loadCollection,
+    openCard,
+    closeCard
   };
 }

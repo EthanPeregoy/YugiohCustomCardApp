@@ -1,8 +1,8 @@
 <script setup lang="ts">
-defineProps<{
-  username: string;
-  show: boolean;
-}>();
+  defineProps<{
+    username: string;
+    show: boolean;
+  }>();
 </script>
 
 <template>

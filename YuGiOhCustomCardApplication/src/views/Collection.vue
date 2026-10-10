@@ -3,11 +3,11 @@ import { ref, nextTick } from "vue";
 import { useCollection } from "../composables/useCollection";
 import CardDetailsModal from "../components/CardDetailsModal.vue";
 
-import "../styles/card-search.css";
 import "../styles/collection.css";
 
 const {
   collection,
+  selectedCardId,
   filteredCollection,
   paginatedCollection,
   searchQuery,
@@ -16,34 +16,11 @@ const {
   currentPage,
   totalPages,
   galleryElement,
-  nextPage,
-  previousPage
+  openCard,
+  closeCard,
+  changePage
 } = useCollection();
 
-const selectedCardId = ref<number | null>(null);
-
-function openCard(cardId: number) {
-  selectedCardId.value = cardId;
-}
-
-function closeCard() {
-  selectedCardId.value = null;
-}
-
-async function changePage(direction: "next" | "previous") {
-  if (direction === "next") {
-    nextPage();
-  } else {
-    previousPage();
-  }
-
-  await nextTick();
-
-  document.getElementById("collection-gallery")?.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-}
 </script>
 
 <template>
@@ -112,7 +89,7 @@ async function changePage(direction: "next" | "previous") {
         <div v-if="filteredCollection.length > 0" class="pagination">
           <button
             class="pagination-button"
-            @click="previousPage"
+            @click="changePage('previous')"
             :disabled="currentPage === 1"
           >
             ← Previous
@@ -124,7 +101,7 @@ async function changePage(direction: "next" | "previous") {
 
           <button
             class="pagination-button"
-            @click="nextPage"
+            @click="changePage('next')"
             :disabled="currentPage >= totalPages"
           >
             Next →

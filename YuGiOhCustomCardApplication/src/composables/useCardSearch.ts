@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, nextTick, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getAllCards, searchCardsByName } from "../services/cardService";
 
@@ -24,7 +24,32 @@ export function useCardSearch() {
   const cardGap = 24;
   const rowsPerPage = 4;
 
+  const selectedCardId = ref<number | null>(null);
+
   let resizeObserver: ResizeObserver | null = null;
+
+  function openCard(cardId: number) {
+    selectedCardId.value = cardId;
+  }
+
+  function closeCard() {
+    selectedCardId.value = null;
+  }
+
+  async function changePage(direction: "next" | "previous") {
+    if (direction === "next") {
+      nextPage();
+    } else {
+      previousPage();
+    }
+
+    await nextTick();
+
+    document.getElementById("card-gallery")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
 
   function updateCardsPerPage() {
     if (!galleryElement.value) return;
@@ -153,6 +178,7 @@ export function useCardSearch() {
   return {
     searchQuery,
     cards,
+    selectedCardId,
     loading,
     error,
     currentPage,
@@ -160,7 +186,8 @@ export function useCardSearch() {
     paginatedCards,
     galleryElement,
     searchCards,
-    nextPage,
-    previousPage,
+    openCard,
+    closeCard,
+    changePage
   };
 }

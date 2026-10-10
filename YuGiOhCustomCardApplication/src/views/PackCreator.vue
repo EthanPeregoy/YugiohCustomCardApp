@@ -1,94 +1,91 @@
 <script setup lang="ts">
-import { usePackCreator } from "../composables/usePackCreator";
+  import { usePackCreator } from "../composables/usePackCreator";
+  import PackInformation from "../components/packCreator/PackInformation.vue";
+  import CardSlotSettings from "../components/packCreator/CardSlotSettings.vue";
+  import ConditionalRules from "../components/packCreator/ConditionalRules.vue";
+  import CardPoolManager from "../components/packCreator/CardPoolManager.vue";
+  import PackSimulator from "../components/packCreator/PackSimulator.vue";
+  import PackArtworkEditor from "../components/packCreator/PackArtworkEditor.vue";
+  import { ref } from "vue";
+  import { uploadPackArtwork } from "../services/packService";
 
-import PackInformation from "../components/packCreator/PackInformation.vue";
-import CardSlotSettings from "../components/packCreator/CardSlotSettings.vue";
-import ConditionalRules from "../components/packCreator/ConditionalRules.vue";
-import CardPoolManager from "../components/packCreator/CardPoolManager.vue";
-import PackSimulator from "../components/packCreator/PackSimulator.vue";
-import PackArtworkEditor from "../components/packCreator/PackArtworkEditor.vue";
-import { ref } from "vue";
-import { uploadPackArtwork } from "../services/packService";
+  import "../styles/pack-creator.css";
 
-import "../styles/pack-creator.css";
+  const artworkEditor = ref<InstanceType<
+    typeof PackArtworkEditor
+  > | null>(null);
 
+  const uploadingArtwork = ref(false);
 
+  const {
+    // Pack information
+    packName,
+    packDescription,
+    packPrice,
+    packRestricted,
 
-const artworkEditor = ref<InstanceType<
-  typeof PackArtworkEditor
-> | null>(null);
+    // Card slots
+    cardsPerPack,
+    cardSlots,
+    selectedSlot,
+    currentSlot,
+    totalProbability,
+    copyStart,
+    copyEnd,
+    selectSlot,
+    updateCardCount,
+    copySlotSettings,
+    addConditionalRule,
+    removeConditionalRule,
 
-const uploadingArtwork = ref(false);
+    // Card pools
+    cardPools,
+    cardSearch,
+    selectedRarity,
+    filteredCards,
+    addCardToPool,
+    removeCardFromPool,
 
-const {
-  // Pack information
-  packName,
-  packDescription,
-  packPrice,
-  packRestricted,
+    // Simulator
+    pulledCards,
+    simulationError,
+    testOpenPack,
 
-  // Card slots
-  cardsPerPack,
-  cardSlots,
-  selectedSlot,
-  currentSlot,
-  totalProbability,
-  copyStart,
-  copyEnd,
-  selectSlot,
-  updateCardCount,
-  copySlotSettings,
-  addConditionalRule,
-  removeConditionalRule,
+    // Pack saving
+    savingPack,
+    saveError,
+    saveSuccess,
+    savePack: savePackData
+  } = usePackCreator();
 
-  // Card pools
-  cardPools,
-  cardSearch,
-  selectedRarity,
-  filteredCards,
-  addCardToPool,
-  removeCardFromPool,
+  async function savePackWithArtwork() {
+    if (uploadingArtwork.value || savingPack.value) return;
 
-  // Simulator
-  pulledCards,
-  simulationError,
-  testOpenPack,
+    uploadingArtwork.value = true;
+    saveError.value = "";
+    saveSuccess.value = "";
 
-  // Pack saving
-  savingPack,
-  saveError,
-  saveSuccess,
-  savePack: savePackData
-} = usePackCreator();
+    try {
+      if (!artworkEditor.value) {
+        throw new Error("Artwork editor is unavailable.");
+      }
 
-async function savePackWithArtwork() {
-  if (uploadingArtwork.value || savingPack.value) return;
+      const artworkFile = await artworkEditor.value.getArtworkFile();
 
-  uploadingArtwork.value = true;
-  saveError.value = "";
-  saveSuccess.value = "";
+      const uploadResult = await uploadPackArtwork(artworkFile);
 
-  try {
-    if (!artworkEditor.value) {
-      throw new Error("Artwork editor is unavailable.");
+      await savePackData(uploadResult.image_path);
+    } catch (error) {
+      console.error("Failed to save pack:", error);
+
+      saveError.value =
+        error instanceof Error
+          ? error.message
+          : "Failed to save pack.";
+    } finally {
+      uploadingArtwork.value = false;
     }
-
-    const artworkFile = await artworkEditor.value.getArtworkFile();
-
-    const uploadResult = await uploadPackArtwork(artworkFile);
-
-    await savePackData(uploadResult.image_path);
-  } catch (error) {
-    console.error("Failed to save pack:", error);
-
-    saveError.value =
-      error instanceof Error
-        ? error.message
-        : "Failed to save pack.";
-  } finally {
-    uploadingArtwork.value = false;
   }
-}
 </script>
 
 <template>

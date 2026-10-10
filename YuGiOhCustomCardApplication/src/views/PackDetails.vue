@@ -1,123 +1,26 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import PackCardPool from "../components/PackCardPool.vue";
-import PurchasePackModal from "../components/PurchasePackModal.vue";
-import PackCardReveal from "../components/PackCardReveal.vue";
-import "../styles/pack-details.css";
+  import { usePackDetails } from "../composables/usePackDetails";
 
-interface PoolCard {
-  card_id: number;
-  card_name: string;
-  image_path: string | null;
-  rarity: string;
-}
+  import PackCardPool from "../components/PackCardPool.vue";
+  import PurchasePackModal from "../components/PurchasePackModal.vue";
+  import PackCardReveal from "../components/PackCardReveal.vue";
 
-interface Pack {
-  id: number;
-  name: string;
-  description: string;
-  image_path: string | null;
-  price: number;
-  restricted: boolean;
-  card_pool: PoolCard[];
-}
+  import "../styles/pack-details.css";
 
-const route = useRoute();
-
-const pack = ref<Pack | null>(null);
-const loading = ref(true);
-const error = ref("");
-
-const showPurchaseModal = ref(false);
-
-function openPurchaseModal() {
-  if (!pack.value) return;
-
-  showPurchaseModal.value = true;
-}
-
-function closePurchaseModal() {
-  showPurchaseModal.value = false;
-}
-
-function handlePurchase(remainingDuelPoints: number) {
-  console.log(
-    "Pack purchased! Remaining Duel Points:",
-    remainingDuelPoints
-  );
-}
-
-interface PulledCard {
-  slot_number: number;
-  card_id: number;
-  card_name: string;
-  image_path: string | null;
-  rarity: string;
-}
-
-const pulledCards = ref<PulledCard[]>([]);
-const pulling = ref(false);
-const pullError = ref("");
-const hasPulled = ref(false);
-
-async function loadPack() {
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/packs/${route.params.id}`,
-      {
-        credentials: "include"
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to load pack");
-    }
-
-    pack.value = await response.json();
-
-  } catch (err) {
-    console.error(err);
-    error.value = "Unable to load this pack.";
-  } finally {
-    loading.value = false;
-  }
-}
-
-async function testPull() {
-  if (!pack.value || pulling.value) return;
-
-  pulling.value = true;
-  pullError.value = "";
-  pulledCards.value = [];
-  hasPulled.value = false;
-
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/packs/${pack.value.id}/test-open`,
-      {
-        credentials: "include"
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to generate test pack");
-    }
-
-    const data = await response.json();
-
-    pulledCards.value = data.cards;
-    hasPulled.value = true;
-
-  } catch (err) {
-    console.error(err);
-    pullError.value = "Unable to generate a test pack.";
-  } finally {
-    pulling.value = false;
-  }
-}
-
-onMounted(loadPack);
+  const {
+    pack,
+    loading,
+    error,
+    showPurchaseModal,
+    pulledCards,
+    pulling,
+    pullError,
+    hasPulled,
+    openPurchaseModal,
+    closePurchaseModal,
+    handlePurchase,
+    testPull
+  } = usePackDetails();
 </script>
 
 <template>

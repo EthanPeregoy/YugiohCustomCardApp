@@ -1,3 +1,5 @@
+const API_URL = "http://localhost:3000/api/collections";
+
 export interface CollectionCard {
   id: number;
   card_id: number;
@@ -12,7 +14,7 @@ export interface CollectionCard {
 
 export async function getCollection(): Promise<CollectionCard[]> {
   const response = await fetch(
-    "http://localhost:3000/api/collections",
+    `${API_URL}`,
     {
       credentials: "include"
     }

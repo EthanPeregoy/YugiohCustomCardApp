@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import { ref, nextTick } from "vue";
   import { useCardSearch } from "../composables/useCardSearch";
   import CardDetailsModal from "../components/CardDetailsModal.vue";
-
+  import "../styles/card-search.css";
+  
   const {
     searchQuery,
     cards,
@@ -12,35 +12,12 @@
     totalPages,
     paginatedCards,
     galleryElement,
+    selectedCardId,
     searchCards,
-    nextPage,
-    previousPage,
+    openCard,
+    closeCard,
+    changePage
   } = useCardSearch();
-
-  const selectedCardId = ref<number | null>(null);
-
-  function openCard(cardId: number) {
-    selectedCardId.value = cardId;
-  }
-
-  function closeCard() {
-    selectedCardId.value = null;
-  }
-
-  async function changePage(direction: "next" | "previous") {
-    if (direction === "next") {
-      nextPage();
-    } else {
-      previousPage();
-    }
-
-    await nextTick();
-
-    document.getElementById("card-gallery")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }
 </script>
 
 <template>

@@ -1,0 +1,301 @@
+.deck-editor-page {
+  width: 96%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 25px 20px 60px;
+  box-sizing: border-box;
+}
+
+.deck-editor-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.deck-editor-header h1 {
+  margin: 0 0 8px;
+  color: #f0dfff;
+}
+
+.deck-editor-header p {
+  margin: 0;
+  color: #e2d3f3;
+}
+
+.deck-editor-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.deck-editor-toolbar p {
+  color: #d4b9f4;
+  margin: 0;
+}
+
+.deck-editor-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(270px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.deck-editor-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.deck-section {
+  padding: 15px;
+  background: rgba(16, 9, 32, 0.9);
+  border: 1px solid rgba(155, 105, 225, 0.5);
+  border-radius: 12px;
+}
+
+.deck-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.deck-section-header h2 {
+  margin: 0;
+  color: #f0dfff;
+  font-size: 1.3rem;
+}
+
+.deck-section-count {
+  color: #d5c1ed;
+  font-weight: 600;
+}
+
+.deck-section-content {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+/* Main Deck: 10 cards per row */
+.deck-main .deck-section-content {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  min-height: 280px;
+  background: rgba(135, 83, 40, 0.28);
+  border: 2px solid rgba(180, 110, 55, 0.7);
+}
+
+/* Extra Deck: 15 cards in one row */
+.deck-extra .deck-section-content {
+  grid-template-columns: repeat(15, minmax(0, 1fr));
+  min-height: 110px;
+  background: rgba(85, 70, 150, 0.3);
+  border: 2px solid rgba(130, 110, 200, 0.7);
+}
+
+/* Side Deck: 15 cards in one row */
+.deck-side .deck-section-content {
+  grid-template-columns: repeat(15, minmax(0, 1fr));
+  min-height: 110px;
+  background: rgba(60, 110, 60, 0.3);
+  border: 2px solid rgba(105, 155, 90, 0.7);
+}
+
+.deck-main .deck-section-content {
+  min-height: 280px;
+  background: rgba(135, 83, 40, 0.28);
+  border: 2px solid rgba(180, 110, 55, 0.7);
+}
+
+.deck-extra .deck-section-content {
+  background: rgba(85, 70, 150, 0.3);
+  border: 2px solid rgba(130, 110, 200, 0.7);
+}
+
+.deck-side .deck-section-content {
+  background: rgba(60, 110, 60, 0.3);
+  border: 2px solid rgba(105, 155, 90, 0.7);
+}
+
+.deck-editor-card {
+  width: 100%;
+  min-width: 0;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.deck-editor-card:hover {
+  transform: scale(1.08);
+  z-index: 5;
+}
+
+.deck-editor-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 0.69;
+  object-fit: contain;
+  border-radius: 3px;
+}
+
+.deck-section-empty {
+  grid-column: 1 / -1;
+  width: 100%;
+  align-self: center;
+  text-align: center;
+  color: rgba(230, 215, 245, 0.6);
+  font-style: italic;
+}
+
+.deck-collection-panel {
+  background: rgba(18, 10, 35, 0.94);
+  border: 1px solid rgba(160, 105, 235, 0.65);
+  border-radius: 12px;
+  padding: 15px;
+  min-width: 0;
+}
+
+.deck-collection-panel h2 {
+  color: #f0dfff;
+  font-size: 1.3rem;
+  margin: 0 0 15px;
+}
+
+.deck-collection-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 7px;
+  border: 1px solid #8661b3;
+  background: #110b20;
+  color: white;
+}
+
+.deck-collection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 650px;
+  overflow-y: auto;
+}
+
+.deck-collection-placeholder {
+  padding: 30px 10px;
+  text-align: center;
+  color: #cbb6e7;
+}
+
+
+.deck-collection-count {
+  margin: 0 0 12px;
+  color: #cbb6e7;
+  font-size: 0.85rem;
+}
+
+.deck-collection-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+
+  background: rgba(35, 22, 55, 0.85);
+  border: 1px solid rgba(150, 100, 220, 0.25);
+  border-radius: 8px;
+
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.deck-collection-card:hover {
+  background: rgba(75, 45, 110, 0.9);
+  border-color: #aa75e8;
+}
+
+.deck-collection-card-image {
+  width: 55px;
+  height: auto;
+  aspect-ratio: 0.69;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.deck-collection-card-no-image {
+  width: 55px;
+  min-height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #21162e;
+  color: #bca7d6;
+  font-size: 0.7rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.deck-collection-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.deck-collection-card-name {
+  color: #f0dfff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.deck-collection-card-type {
+  color: #c7b6df;
+  font-size: 0.8rem;
+}
+
+.deck-collection-card-owned {
+  color: #b991f1;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.deck-editor-feedback {
+  margin: 10px 0;
+  color: #d6b4ff;
+  font-weight: 600;
+  text-align: center;
+}
+
+.deck-editor-feedback.error {
+  color: #ff9ba8;
+}
+
+@media (max-width: 950px) {
+  .deck-editor-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .deck-collection-list {
+    max-height: 350px;
+  }
+}
+
+@media (max-width: 600px) {
+  .deck-editor-page {
+    width: 100%;
+    padding: 20px 10px;
+  }
+
+  .deck-editor-toolbar {
+    flex-direction: column;
+  }
+}

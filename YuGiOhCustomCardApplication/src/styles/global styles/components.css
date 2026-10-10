@@ -28,10 +28,9 @@ button {
 }
 
 button:hover {
-  border-color: #396cd8;
+  filter: brightness(1.15);
 }
 
 button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
+  filter: brightness(0.9);
 }

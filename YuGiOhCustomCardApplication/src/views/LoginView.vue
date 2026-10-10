@@ -19,7 +19,7 @@
 </script>
 
 <template>
-  <main class="login-screen galaxy-background">
+  <main class="login-screen">
     <div class="login-panel">
       <h1>
         {{ isRegistering ? "Create Account" : "Welcome Duelist" }}

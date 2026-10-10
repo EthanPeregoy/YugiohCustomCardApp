@@ -13,7 +13,7 @@
 </script>
 
 <template>
-  <main class="title-screen galaxy-background">
+  <main class="title-screen">
     <div class="title-content">
 
       <!-- Game Title -->

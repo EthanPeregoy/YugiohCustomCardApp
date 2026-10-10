@@ -8,6 +8,7 @@ import CardShopView from "../views/CardShop.vue";
 import PackShopView from "../views/PackShop.vue";
 import CollectionView from "../views/Collection.vue";
 import DecksView from "../views/Decks.vue";
+import DeckEditorView from "../views/DeckEditor.vue";
 import UserView from "../views/User.vue";
 import PackCreator from "../views/PackCreator.vue";
 import PackDetailsView from "../views/PackDetails.vue";
@@ -50,6 +51,10 @@ const router = createRouter({
     {
       path: "/decks",
       component: DecksView,
+    },
+    {
+      path: "/decks/:id",
+      component: DeckEditorView,
     },
     {
       path: "/pack-creator",

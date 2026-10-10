@@ -27,6 +27,14 @@ const error = ref("");
 
 const selectedCardId = ref<number | null>(null);
 
+const purchasing = ref(false);
+const purchaseMessage = ref("");
+const purchaseError = ref("");
+
+const selectedCard = computed(() =>
+  cards.value.find(card => card.id === selectedCardId.value)
+);
+
 const currentPage = ref(1);
 const columnsPerRow = ref(5);
 
@@ -105,6 +113,42 @@ function openCard(cardId: number) {
 
 function closeCard() {
   selectedCardId.value = null;
+}
+
+async function purchaseCard() {
+  if (!selectedCard.value || purchasing.value) return;
+
+  purchasing.value = true;
+  purchaseError.value = "";
+  purchaseMessage.value = "";
+
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/card-shop/${selectedCard.value.id}/purchase`,
+      {
+        method: "POST",
+        credentials: "include"
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Purchase failed");
+    }
+
+    purchaseMessage.value =
+      `Successfully purchased ${selectedCard.value.cardname}! ` +
+      `Remaining DP: ${data.remainingDuelPoints}`;
+
+  } catch (err) {
+    purchaseError.value =
+      err instanceof Error
+        ? err.message
+        : "An unexpected error occurred";
+  } finally {
+    purchasing.value = false;
+  }
 }
 
 async function changePage(direction: "next" | "previous") {
@@ -253,9 +297,32 @@ onUnmounted(() => {
       </div>
     </div>
 
+    <div
+      v-if="purchaseMessage || purchaseError"
+      class="shop-notification"
+    >
+      <p v-if="purchaseMessage" class="shop-success">
+        {{ purchaseMessage }}
+      </p>
+
+      <p v-if="purchaseError" class="shop-error">
+        {{ purchaseError }}
+      </p>
+
+      <button
+        type="button"
+        @click="purchaseMessage = ''; purchaseError = ''"
+      >
+        Dismiss
+      </button>
+    </div>
+
     <CardDetailsModal
       :card-id="selectedCardId"
+      :price="selectedCard?.price"
+      :rarity="selectedCard?.rarity"
       @close="closeCard"
+      @purchase="purchaseCard"
     />
   </main>
 </template>

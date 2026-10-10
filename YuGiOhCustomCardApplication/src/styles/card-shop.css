@@ -86,3 +86,28 @@
     max-width: 120px;
   }
 }
+
+.shop-notification {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 1100;
+
+  max-width: 350px;
+  padding: 16px 20px;
+
+  background: rgba(25, 15, 45, 0.98);
+  border: 1px solid rgba(170, 110, 255, 0.6);
+  border-radius: 12px;
+
+  color: white;
+  box-shadow: 0 0 20px rgba(130, 70, 220, 0.35);
+}
+
+.shop-success {
+  color: #9ff0b1;
+}
+
+.shop-error {
+  color: #ff9999;
+}

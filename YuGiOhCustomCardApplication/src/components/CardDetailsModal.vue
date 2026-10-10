@@ -4,10 +4,13 @@ import CardDetails from "./CardDetails.vue";
 
 const props = defineProps<{
   cardId: string | number | null;
+  price?: number;
+  rarity?: string;
 }>();
 
 const emit = defineEmits<{
   close: [];
+  purchase: [];
 }>();
 
 function closeModal() {
@@ -60,6 +63,21 @@ onUnmounted(() => {
         </button>
 
         <CardDetails :card-id="cardId" />
+
+        <div v-if="price !== undefined" class="modal-purchase">
+          <div class="modal-purchase-info">
+            <span>{{ rarity }}</span>
+            <strong>{{ price }} DP</strong>
+          </div>
+
+          <button
+            type="button"
+            class="modal-purchase-button"
+            @click="emit('purchase')"
+          >
+            Purchase Card
+          </button>
+        </div>
       </div>
     </div>
   </Teleport>
@@ -129,6 +147,60 @@ onUnmounted(() => {
 
   .modal-container {
     max-height: 95vh;
+  }
+}
+
+
+.modal-purchase {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+
+  padding: 20px;
+  margin-top: 10px;
+
+  background: rgba(25, 15, 45, 0.95);
+  border: 1px solid rgba(170, 110, 255, 0.4);
+  border-radius: 12px;
+}
+
+.modal-purchase-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+
+  color: #d6b8ff;
+}
+
+.modal-purchase-info strong {
+  color: #ffd76a;
+  font-size: 22px;
+}
+
+.modal-purchase-button {
+  padding: 12px 25px;
+
+  background: #673ab7;
+  color: white;
+
+  border: 1px solid #a66cff;
+  border-radius: 8px;
+
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-purchase-button:hover {
+  background: #8050d0;
+}
+
+@media (max-width: 600px) {
+  .modal-purchase {
+    flex-direction: column;
+    gap: 12px;
   }
 }
 </style>

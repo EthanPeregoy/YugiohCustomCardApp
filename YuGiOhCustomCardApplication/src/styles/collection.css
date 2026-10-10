@@ -1,0 +1,80 @@
+/* Collection-specific layout */
+
+.collection-page {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+  padding: 0 0 40px;
+}
+
+/* Collection card layout */
+
+.collection-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  min-width: 0;
+  text-align: center;
+}
+
+/* Card information */
+
+.collection-card-info {
+  width: 100%;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.collection-card-info h3 {
+  margin: 0 0 8px;
+
+  color: #f2e8ff;
+  font-size: 14px;
+  font-weight: 600;
+
+  overflow-wrap: anywhere;
+}
+
+.collection-card-rarity {
+  margin: 6px 0;
+
+  color: #d4af37;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.collection-card-quantity {
+  margin: 6px 0;
+
+  color: #d5c5e8;
+  font-size: 13px;
+}
+
+/* Loading, errors, and empty states */
+
+.collection-message {
+  margin: 35px auto;
+  text-align: center;
+
+  color: #e5d3ff;
+  font-size: 16px;
+}
+
+/* Responsive adjustments */
+
+@media (max-width: 600px) {
+  .collection-page {
+    padding-bottom: 24px;
+  }
+
+  .collection-card-info h3 {
+    font-size: 12px;
+  }
+
+  .collection-card-rarity,
+  .collection-card-quantity {
+    font-size: 12px;
+  }
+}

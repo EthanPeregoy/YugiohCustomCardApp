@@ -1,5 +1,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
 import { getCollection, type CollectionCard } from "../services/collectionService";
+import { createDefaultCardFilters } from "../types/cardFilters";
+import { filterAndSortCards } from "../utils/cardFiltering";
 
 export function useCollection() {
   const collection = ref<CollectionCard[]>([]);
@@ -8,12 +10,42 @@ export function useCollection() {
 
   const searchQuery = ref("");
 
-  // Filter collection by card name
+  const cardFilters = ref(
+    createDefaultCardFilters()
+  );
+
+  const availableRarities = computed(() =>
+    [...new Set(
+      collection.value.map(card => card.rarity)
+    )]
+  );
+
+  const availableTags = computed(() => {
+    const tagsById = new Map();
+
+    for (const card of collection.value) {
+      for (const tag of card.tags ?? []) {
+        tagsById.set(tag.id, tag);
+      }
+    }
+
+    return [...tagsById.values()].sort(
+      (a, b) => a.name.localeCompare(b.name)
+    );
+  });
+
+  // Combine name search, modal filters, and sorting.
   const filteredCollection = computed(() => {
     const query = searchQuery.value.trim().toLowerCase();
 
-    return collection.value.filter(card =>
+    const matchingNames = collection.value.filter(card =>
       card.card_name.toLowerCase().includes(query)
+    );
+
+    return filterAndSortCards(
+      matchingNames,
+      cardFilters.value,
+      "collection"
     );
   });
 
@@ -118,6 +150,14 @@ export function useCollection() {
     currentPage.value = 1;
   });
 
+  watch(
+    cardFilters,
+    () => {
+      currentPage.value = 1;
+    },
+    { deep: true }
+  );
+
   // Observe gallery width
   watch(galleryElement, (element) => {
     resizeObserver?.disconnect();
@@ -134,13 +174,21 @@ export function useCollection() {
   });
 
   // Retrieve logged-in user's collection
-  async function loadCollection() {
+  async function loadCollection(resetPage = true) {
     loading.value = true;
     error.value = "";
 
     try {
       collection.value = await getCollection();
-      currentPage.value = 1;
+
+      if (resetPage) {
+        currentPage.value = 1;
+      } else {
+        currentPage.value = Math.min(
+          currentPage.value,
+          totalPages.value
+        );
+      }
     } catch (err) {
       console.error("Error loading collection:", err);
 
@@ -151,7 +199,7 @@ export function useCollection() {
     }
   }
 
-  onMounted(loadCollection);
+  onMounted(() => loadCollection());
 
   onBeforeUnmount(() => {
     resizeObserver?.disconnect();
@@ -159,6 +207,9 @@ export function useCollection() {
 
   return {
     collection,
+    cardFilters,
+    availableRarities,
+    availableTags,
     selectedCardId,
     filteredCollection,
     paginatedCollection,

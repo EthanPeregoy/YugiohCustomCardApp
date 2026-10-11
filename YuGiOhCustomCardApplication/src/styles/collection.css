@@ -62,6 +62,41 @@
   font-size: 16px;
 }
 
+.collection-sell-button {
+  padding: 8px 16px;
+  margin-top: 8px;
+
+  font: inherit;
+  color: #ffffff;
+  background: #59317a;
+
+  border: 1px solid #a570cd;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.collection-sell-button:hover {
+  background: #704195;
+}
+
+.collection-sale-feedback {
+  width: 90%;
+  max-width: 650px;
+  box-sizing: border-box;
+  margin: 0 auto 20px;
+  padding: 16px 20px;
+
+  color: #f0dfff;
+  background: rgba(25, 15, 41, 0.95);
+
+  border: 1px solid #a675d2;
+  border-radius: 12px;
+}
+
+.collection-sale-feedback p {
+  margin: 0 0 10px;
+}
 /* Responsive adjustments */
 
 @media (max-width: 600px) {

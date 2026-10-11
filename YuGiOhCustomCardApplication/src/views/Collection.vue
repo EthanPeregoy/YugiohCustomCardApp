@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { ref, nextTick } from "vue";
+import { ref } from "vue";
 import { useCollection } from "../composables/useCollection";
 import CardDetailsModal from "../components/CardDetailsModal.vue";
+import CardFilterModal from "../components/CardFilterModal.vue";
+import SellCardModal from "../components/SellCardModal.vue";
+import type { CollectionCard, CardSaleResult } from "../services/collectionService";
 
 import "../styles/collection.css";
 
 const {
   collection,
+  cardFilters,
+  availableRarities,
+  availableTags,
   selectedCardId,
   filteredCollection,
   paginatedCollection,
@@ -18,14 +24,75 @@ const {
   galleryElement,
   openCard,
   closeCard,
-  changePage
+  changePage,
+  loadCollection
 } = useCollection();
+
+const showSellModal = ref(false);
+const selectedSaleCard = ref<CollectionCard | null>(null);
+
+const saleMessage = ref("");
+const affectedDeckNames = ref<string[]>([]);
+
+function canSellAutomatically(rarity: string) {
+  return [
+    "Common",
+    "Rare",
+    "Super Rare"
+  ].includes(rarity);
+}
+
+function openSellModal(card: CollectionCard) {
+  selectedSaleCard.value = card;
+  showSellModal.value = true;
+}
+
+async function handleSale(result: CardSaleResult) {
+  saleMessage.value =
+    `Sold ${result.quantitySold} × ${result.cardName} ` +
+    `(${result.rarity}) for ${result.earnedDP} DP. ` +
+    `Balance: ${result.remainingDuelPoints} DP.`;
+
+  affectedDeckNames.value = result.affectedDecks.map(
+    deck => deck.name
+  );
+
+  selectedSaleCard.value = null;
+
+  await loadCollection(false);
+}
+
+const showFilters = ref(false);
 
 </script>
 
 <template>
   <main class="container collection-page">
     <h1>My Collection</h1>
+
+    <div
+      v-if="saleMessage"
+      class="collection-sale-feedback"
+      role="status"
+    >
+      <p>{{ saleMessage }}</p>
+
+      <p v-if="affectedDeckNames.length > 0">
+        Marked invalid after removing excess copies:
+        {{ affectedDeckNames.join(", ") }}.
+      </p>
+
+      <button
+        type="button"
+        class="collection-sell-button"
+        @click="
+          saleMessage = '';
+          affectedDeckNames = [];
+        "
+      >
+        Dismiss
+      </button>
+    </div>
 
     <!-- Search Panel -->
     <div class="search-panel">
@@ -36,6 +103,14 @@ const {
           class="search-input"
           placeholder="Search your collection..."
         />
+
+        <button
+          type="button"
+          class="search-button"
+          @click="showFilters = true"
+        >
+          Filters
+        </button>
       </div>
 
       <div
@@ -144,12 +219,35 @@ const {
               <p class="collection-card-quantity">
                 Owned: {{ card.quantity }}
               </p>
+
+              <button
+                v-if="canSellAutomatically(card.rarity)"
+                type="button"
+                class="collection-sell-button"
+                @click="openSellModal(card)"
+              >
+                Sell
+              </button>
             </div>
           </div>
         </div>
 
       </div>
     </div>
+
+    <CardFilterModal
+      v-model:open="showFilters"
+      v-model="cardFilters"
+      mode="collection"
+      :available-rarities="availableRarities"
+      :available-tags="availableTags"
+    />
+
+    <SellCardModal
+      v-model:open="showSellModal"
+      :card="selectedSaleCard"
+      @sold="handleSale"
+    />
 
     <!-- Card Details Modal -->
     <CardDetailsModal

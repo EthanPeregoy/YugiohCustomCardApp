@@ -1,4 +1,4 @@
-import type { CardFilters } from "../types/cardFilters";
+import type { CardFilters, CardFilterMode, CardTag } from "../types/cardFilters";
 
 export interface FilterableCard {
   card_name: string;
@@ -14,6 +14,10 @@ export interface FilterableCard {
   link_value: number | null;
 
   is_custom: boolean;
+
+  quantity?: number;
+  rarity?: string;
+  tags?: CardTag[];
 }
 
 function normalize(value: string | null | undefined) {
@@ -42,9 +46,34 @@ function matchesMonsterType(
 
 function matchesFilters(
   card: FilterableCard,
-  filters: CardFilters
+  filters: CardFilters,
+  mode: CardFilterMode
 ) {
   const category = getCardCategory(card);
+
+  const supportsRarity =
+    mode === "shop" || mode === "collection";
+
+    const supportsTags =
+    mode === "collection" || mode === "deck";
+
+    if (
+    supportsRarity &&
+    filters.rarities.length > 0 &&
+    !filters.rarities.includes(card.rarity ?? "")
+    ) {
+    return false;
+    }
+
+    if (
+    supportsTags &&
+    filters.tagIds.length > 0 &&
+    !filters.tagIds.every(tagId =>
+        card.tags?.some(tag => tag.id === tagId)
+    )
+    ) {
+    return false;
+    }
 
   // General filters
   if (
@@ -187,6 +216,35 @@ function getSortValue(
     case "link_value":
       return card.link_value;
 
+    case "quantity":
+      return card.quantity === undefined
+        ? null
+        : Number(card.quantity);
+
+    case "rarity": {
+      const rarityOrder = [
+        "Common",
+        "Rare",
+        "Super Rare",
+        "Ultra Rare",
+        "Secret Rare"
+      ];
+
+      const index = rarityOrder.indexOf(
+        card.rarity ?? ""
+      );
+
+      return index === -1 ? null : index;
+    }
+
+    case "tags":
+      return card.tags?.length
+        ? card.tags
+            .map(tag => tag.name)
+            .sort((a, b) => a.localeCompare(b))
+            .join(", ")
+        : null;
+
     default:
       return card.card_name;
   }
@@ -194,12 +252,13 @@ function getSortValue(
 
 export function filterAndSortCards<T extends FilterableCard>(
   cards: T[],
-  filters: CardFilters
+  filters: CardFilters,
+  mode: CardFilterMode = "search"
 ): T[] {
   const filtered = cards.filter(card =>
-    matchesFilters(card, filters)
+    matchesFilters(card, filters, mode)
   );
-
+  
   const direction =
     filters.sortDirection === "asc" ? 1 : -1;
 

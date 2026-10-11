@@ -441,6 +441,11 @@ function applyFilters() {
 
             <select v-model="draftFilters.sortBy">
               <option value="name">Card Name</option>
+              <option
+                v-if="props.mode === 'collection'"
+                value="quantity">
+                Quantity Owned
+              </option>
               <option value="attack">ATK</option>
               <option value="defense">DEF</option>
               <option value="level">Level / Rank</option>

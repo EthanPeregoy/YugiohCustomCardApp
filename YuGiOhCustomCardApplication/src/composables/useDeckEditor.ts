@@ -8,7 +8,7 @@ import type {
   DeckCollectionCard
 } from "./useDeckCollection";
 
-type DeckSection = "main" | "extra" | "side";
+export type DeckSection = "main" | "extra" | "side";
 
 const SECTION_LIMITS: Record<DeckSection, number> = {
   main: 60,
@@ -108,6 +108,69 @@ export function useDeckEditor() {
 
     hasChanges.value = true;
   }
+  
+  function addCardToSection(
+    card: DeckCollectionCard,
+    section: DeckSection
+  ): boolean {
+    actionMessage.value = "";
+
+    const totalInDeck = editableCards.value
+      .filter(entry => entry.card_id === card.card_id)
+      .reduce((sum, entry) => sum + entry.quantity, 0);
+
+    if (totalInDeck >= 3) {
+      actionMessage.value = "Maximum 3 copies per card.";
+      return false;
+    }
+
+    if (totalInDeck >= card.quantity) {
+      actionMessage.value = "You don't own enough copies.";
+      return false;
+    }
+
+    const isExtra = isExtraDeckCard(card.frame_type);
+
+    if (section === "main" && isExtra) {
+      actionMessage.value =
+        "Extra Deck monsters cannot enter the Main Deck.";
+      return false;
+    }
+
+    if (section === "extra" && !isExtra) {
+      actionMessage.value =
+        "This card cannot enter the Extra Deck.";
+      return false;
+    }
+
+    if (sectionCount(section) >= SECTION_LIMITS[section]) {
+      actionMessage.value = `${section} deck is full.`;
+      return false;
+    }
+
+    const existing = editableCards.value.find(
+      entry =>
+        entry.card_id === card.card_id &&
+        entry.deck_section === section
+    );
+
+    if (existing) {
+      existing.quantity++;
+    } else {
+      editableCards.value.push({
+        card_id: card.card_id,
+        card_name: card.card_name,
+        image_path: card.image_path,
+        card_type: card.card_type,
+        frame_type: card.frame_type,
+        deck_section: section,
+        quantity: 1
+      });
+    }
+
+    hasChanges.value = true;
+    return true;
+  }
 
   function removeCard(cardId: number, section: DeckSection) {
     actionMessage.value = "";
@@ -128,6 +191,74 @@ export function useDeckEditor() {
 
     hasChanges.value = true;
   }
+
+  function moveCard(
+    cardId: number,
+    from: DeckSection,
+    to: DeckSection
+  ): boolean {
+    actionMessage.value = "";
+
+    if (from === to) return false;
+
+    const source = editableCards.value.find(
+      card =>
+        card.card_id === cardId &&
+        card.deck_section === from
+    );
+
+    if (!source) return false;
+
+    const isExtra = isExtraDeckCard(source.frame_type);
+
+    // Main Deck cannot contain Extra Deck monsters
+    if (to === "main" && isExtra) {
+      actionMessage.value =
+        "Extra Deck monsters cannot enter the Main Deck.";
+      return false;
+    }
+
+    // Extra Deck only accepts eligible monsters
+    if (to === "extra" && !isExtra) {
+      actionMessage.value =
+        "This card cannot enter the Extra Deck.";
+      return false;
+    }
+
+    if (sectionCount(to) >= SECTION_LIMITS[to]) {
+      actionMessage.value = `${to} deck is full.`;
+      return false;
+    }
+
+    const destination = editableCards.value.find(
+      card =>
+        card.card_id === cardId &&
+        card.deck_section === to
+    );
+
+    // Move exactly one copy
+    if (destination) {
+      destination.quantity++;
+    } else {
+      editableCards.value.push({
+        ...source,
+        deck_section: to,
+        quantity: 1
+      });
+    }
+
+    if (source.quantity > 1) {
+      source.quantity--;
+    } else {
+      editableCards.value = editableCards.value.filter(
+        card => card !== source
+      );
+    }
+
+    hasChanges.value = true;
+    return true;
+  }
+
 
   async function saveCards(deckId: number): Promise<boolean> {
     if (saving.value || !hasChanges.value) return false;
@@ -170,7 +301,9 @@ export function useDeckEditor() {
     sectionCount,
     loadCards,
     addCard,
+    addCardToSection,
     removeCard,
+    moveCard,
     saveCards
   };
 }

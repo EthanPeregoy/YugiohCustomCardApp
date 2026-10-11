@@ -4,7 +4,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getDeck, type DeckDetails } from "../services/deckService";
 import { useDeckCollection } from "../composables/useDeckCollection";
-import { useDeckEditor } from "../composables/useDeckEditor";
+import { useDeckEditor, type DeckSection } from "../composables/useDeckEditor";
 import CardDetailsModal from "../components/CardDetailsModal.vue";
 import "../styles/deck-editor.css";
 
@@ -44,13 +44,119 @@ const {
   sectionCount,
   loadCards,
   addCard,
+  addCardToSection,
   removeCard,
+  moveCard,
   saveCards
 } = useDeckEditor();
 
 async function handleSave() {
   const deckId = Number(route.params.id);
   await saveCards(deckId);
+}
+
+type DraggedCard =
+  | { source: "collection"; cardId: number }
+  | {
+      source: "deck";
+      cardId: number;
+      section: DeckSection;
+    };
+
+const draggedCard = ref<DraggedCard | null>(null);
+const dragOverSection = ref<DeckSection | null>(null);
+const draggingOverCollection = ref(false);
+
+function startCollectionDrag(
+  event: DragEvent,
+  cardId: number
+) {
+  draggedCard.value = {
+    source: "collection",
+    cardId
+  };
+
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = "copy";
+    event.dataTransfer.setData("text/plain", String(cardId));
+  }
+}
+
+function startDeckDrag(
+  event: DragEvent,
+  cardId: number,
+  section: DeckSection
+) {
+  draggedCard.value = {
+    source: "deck",
+    cardId,
+    section
+  };
+
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", String(cardId));
+  }
+}
+
+function handleDragOver(
+  event: DragEvent,
+  section: DeckSection
+) {
+  // Allow the browser to drop cards here
+  event.preventDefault();
+  event.stopPropagation();
+  dragOverSection.value = section;
+
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect =
+      draggedCard.value?.source === "collection"
+        ? "copy"
+        : "move";
+  }
+}
+
+function handleDrop(
+  event: DragEvent,
+  section: DeckSection
+) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const dragged = draggedCard.value;
+  if (!dragged) return;
+
+  if (dragged.source === "collection") {
+    const card = collection.value.find(
+      card => card.card_id === dragged.cardId
+    );
+
+    if (card) {
+      addCardToSection(card, section);
+    }
+  } else {
+    moveCard(dragged.cardId, dragged.section, section);
+  }
+
+  endDrag();
+}
+
+function handleCollectionDrop(event: DragEvent) {
+  event.preventDefault();
+
+  const dragged = draggedCard.value;
+
+  if (dragged?.source === "deck") {
+    removeCard(dragged.cardId, dragged.section);
+  }
+
+  endDrag();
+}
+
+function endDrag() {
+  draggedCard.value = null;
+  dragOverSection.value = null;
+  draggingOverCollection.value = false;
 }
 
 async function loadDeck() {
@@ -142,7 +248,21 @@ onMounted(loadDeck);
               </span>
             </div>
 
-            <div class="deck-section-content">
+            <div
+              class="deck-section-content"
+              :class="{
+                'deck-drop-active': dragOverSection === section.key
+              }"
+              @dragenter.prevent.stop
+              @dragover.prevent.stop="handleDragOver(
+                $event,
+                section.key as DeckSection
+              )"
+              @drop.prevent.stop="handleDrop(
+                $event,
+                section.key as DeckSection
+              )"
+            >
               <div
                 v-for="card in expandedDeckCards.filter(
                     c => c.deck_section === section.key
@@ -153,6 +273,13 @@ onMounted(loadDeck);
                 role="button"
                 tabindex="0"
                 @click="openCard(card.card_id)"
+                draggable="true"
+                @dragstart="startDeckDrag(
+                  $event,
+                  card.card_id,
+                  card.deck_section
+                )"
+                @dragend="endDrag"
                 @contextmenu.prevent="removeCard(card.card_id, card.deck_section)"
                 @keydown.enter="openCard(card.card_id)"
                 @keydown.space.prevent="openCard(card.card_id)"
@@ -182,7 +309,18 @@ onMounted(loadDeck);
             </div>
           </section>
         </div>
-        <aside class="deck-collection-panel">
+        <aside
+          class="deck-collection-panel"
+          :class="{
+            'deck-drop-active': draggingOverCollection
+          }"
+          @dragover.prevent="
+            draggingOverCollection =
+              draggedCard?.source === 'deck'
+          "
+          @dragleave="draggingOverCollection = false"
+          @drop="handleCollectionDrop"
+        >
         <h2>Your Collection</h2>
 
         <input
@@ -227,12 +365,15 @@ onMounted(loadDeck);
             </p>
 
             <button
-            v-for="card in filteredCollection"
-            :key="card.card_id"
-            type="button"
-            class="deck-collection-card"
-            @click="openCard(card.card_id)"
-            @contextmenu.prevent="addCard(card)"
+              v-for="card in filteredCollection"
+              :key="card.card_id"
+              type="button"
+              class="deck-collection-card"
+              draggable="true"
+              @click="openCard(card.card_id)"
+              @contextmenu.prevent="addCard(card)"
+              @dragstart="startCollectionDrag($event, card.card_id)"
+              @dragend="endDrag"
             >
             <img
                 v-if="card.image_path"

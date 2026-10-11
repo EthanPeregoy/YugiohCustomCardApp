@@ -1,6 +1,8 @@
 import { ref, nextTick, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getAllCards, searchCardsByName } from "../services/cardService";
+import { createDefaultCardFilters } from "../types/cardFilters";
+import { filterAndSortCards } from "../utils/cardFiltering";
 
 export function useCardSearch() {
   const route = useRoute();
@@ -15,6 +17,14 @@ export function useCardSearch() {
   const cards = ref<any[]>([]);
   const loading = ref(true);
   const error = ref("");
+
+  const cardFilters = ref(
+    createDefaultCardFilters()
+  );
+
+  const filteredCards = computed(() =>
+    filterAndSortCards(cards.value, cardFilters.value)
+  );
 
   const cardsPerPage = ref(30);
   
@@ -85,13 +95,19 @@ export function useCardSearch() {
   );
 
   const totalPages = computed(() =>
-    Math.max(1, Math.ceil(cards.value.length / cardsPerPage.value))
+    Math.max(
+      1,
+      Math.ceil(
+        filteredCards.value.length / cardsPerPage.value
+      )
+    )
   );
 
   const paginatedCards = computed(() => {
-    const start = (currentPage.value - 1) * cardsPerPage.value;
+    const start =
+      (currentPage.value - 1) * cardsPerPage.value;
 
-    return cards.value.slice(
+    return filteredCards.value.slice(
       start,
       start + cardsPerPage.value
     );
@@ -154,6 +170,15 @@ export function useCardSearch() {
     }
   }
 
+  watch(
+    cardFilters,
+    () => {
+      currentPage.value = 1;
+      updateSearchURL();
+    },
+    { deep: true }
+  );
+
   watch(galleryElement, (element) => {
     resizeObserver?.disconnect();
     resizeObserver = null;
@@ -178,6 +203,8 @@ export function useCardSearch() {
   return {
     searchQuery,
     cards,
+    cardFilters,
+    filteredCards,
     selectedCardId,
     loading,
     error,

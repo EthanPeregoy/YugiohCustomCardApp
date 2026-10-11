@@ -1,11 +1,14 @@
 <script setup lang="ts">
+  import { ref } from "vue";
   import { useCardSearch } from "../composables/useCardSearch";
+  import CardFilterModal from "../components/CardFilterModal.vue";
   import CardDetailsModal from "../components/CardDetailsModal.vue";
   import "../styles/card-search.css";
   
   const {
     searchQuery,
-    cards,
+    cardFilters,
+    filteredCards,
     loading,
     error,
     currentPage,
@@ -18,6 +21,8 @@
     closeCard,
     changePage
   } = useCardSearch();
+
+  const showFilters = ref(false);
 </script>
 
 <template>
@@ -40,10 +45,17 @@
         >
           Search
         </button>
+        <button
+          type="button"
+          class="search-button"
+          @click="showFilters = true"
+        >
+          Filters
+        </button>
       </div>
 
       <div class="search-info" v-if="!loading && !error">
-        <span>{{ cards.length }} cards found</span>
+        <span>{{ filteredCards.length }} cards found</span>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
       </div>
     </div>
@@ -52,7 +64,7 @@
 
     <p v-else-if="error">{{ error }}</p>
 
-    <p v-else-if="cards.length === 0">
+    <p v-else-if="filteredCards.length === 0">
       No cards found.
     </p>
 
@@ -129,6 +141,12 @@
       </div>
     </div>
     </div>
+
+    <CardFilterModal
+      v-model:open="showFilters"
+      v-model="cardFilters"
+      mode="search"
+    />
 
     <CardDetailsModal
       :card-id="selectedCardId"

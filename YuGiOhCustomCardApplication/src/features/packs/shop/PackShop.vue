@@ -1,6 +1,8 @@
 <script setup lang="ts">
+  import { nextTick, ref } from "vue";
   import { usePackShop } from "./composables/usePackShop.ts";
   import PurchasePackModal from "./components/PurchasePackModal.vue";
+  import Pagination from "@/global/components/Pagination.vue";
 
   import "./styles/pack-shop.css";
 
@@ -14,18 +16,33 @@
     filteredPacks,
     totalPages,
     displayedPacks,
+    rowsPerPage,
+    sortBy,
+    includeRestrictedInSort,
     openPurchaseModal,
     closePurchaseModal,
     handlePurchase,
     changePage
   } = usePackShop();
+  
+  const galleryRef = ref<HTMLElement | null>(null);
+
+  async function handlePageChange(page: number) {
+    changePage(page);
+
+    await nextTick();
+
+    galleryRef.value?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
 </script>
 
 <template>
   <main class="pack-shop">
     <header class="shop-header">
       <h1>Pack Shop</h1>
-      <p>Expand your collection with new booster packs!</p>
     </header>
 
     <!-- Search Panel -->
@@ -38,6 +55,44 @@
           placeholder="Search for a pack..."
         />
       </div>
+      
+      <div class="pack-shop-controls">
+        <label>
+          Rows per page
+          <select v-model="rowsPerPage">
+            <option :value="2">2 Rows</option>
+            <option :value="3">3 Rows</option>
+            <option :value="4">4 Rows</option>
+            <option :value="5">5 Rows</option>
+            <option value="all">All Packs</option>
+          </select>
+        </label>
+
+        <label>
+          Sort By
+          <select v-model="sortBy">
+            <option value="default">Default</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name">Name: A to Z</option>
+          </select>
+        </label>
+        
+        <label class="restricted-sort-toggle">
+          <div class="restricted-sort-text">
+            <span>Include Restricted Packs</span>
+            <small>Sort restricted packs alongside other packs</small>
+          </div>
+
+          <input
+            v-model="includeRestrictedInSort"
+            type="checkbox"
+            class="restricted-toggle-input"
+          />
+
+          <span class="restricted-toggle-slider"></span>
+        </label>
+      </div>
 
       <div class="search-info">
         <span>{{ filteredPacks.length }} packs found</span>
@@ -46,34 +101,18 @@
     </section>
 
     <!-- Pack Gallery -->
-    <section class="gallery-panel">
+    <section ref="galleryRef" class="gallery-panel">
       <div class="gallery-header">
         <h2>Pack Gallery</h2>
         <span>{{ displayedPacks.length }} packs displayed</span>
       </div>
 
-      <div
-        v-if="!loading && !error && totalPages > 1"
-        class="pagination"
-      >
-        <button
-          :disabled="currentPage === 1"
-          @click="changePage(currentPage - 1)"
-        >
-          ← Previous
-        </button>
-
-        <span>
-          Page {{ currentPage }} of {{ totalPages }}
-        </span>
-
-        <button
-          :disabled="currentPage === totalPages"
-          @click="changePage(currentPage + 1)"
-        >
-          Next →
-        </button>
-      </div>
+      <Pagination
+        v-if="!loading && !error"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @change-page="handlePageChange"
+      />
 
       <p v-if="loading" class="status-message">
         Loading packs...
@@ -143,6 +182,13 @@
           </div>
         </article>
       </div>
+
+      <Pagination
+        v-if="!loading && !error"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @change-page="handlePageChange"
+      />
     </section>
 
     <PurchasePackModal

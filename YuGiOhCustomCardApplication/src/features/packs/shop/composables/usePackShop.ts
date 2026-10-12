@@ -1,6 +1,7 @@
 
 import { ref, computed, watch, onMounted } from "vue";
 import { getShopPacks, type ShopPack } from "../../services/packService";
+import { usePagination } from "@/global/composables/usePagination";
 
 export function usePackShop() {
   const packs = ref<ShopPack[]>([]);
@@ -25,8 +26,21 @@ export function usePackShop() {
   }
 
   const searchQuery = ref("");
-  const currentPage = ref(1);
-  const packsPerPage = 6;
+
+  const rowsPerPage = ref<number | "all">(3);
+  const sortBy = ref("default");
+  const includeRestrictedInSort = ref(false);
+
+  const columnsPerRow = 4;
+
+  const packsPerPage = computed(() => {
+    if (rowsPerPage.value === "all") {
+      return Math.max(1, sortedPacks.value.length);
+    }
+
+    return rowsPerPage.value * columnsPerRow;
+  });
+
 
   const filteredPacks = computed(() => {
     const query = searchQuery.value.trim().toLowerCase();
@@ -37,28 +51,49 @@ export function usePackShop() {
     );
   });
 
-  const totalPages = computed(() =>
-    Math.max(1, Math.ceil(filteredPacks.value.length / packsPerPage))
+  
+  const sortedPacks = computed(() => {
+    const result = [...filteredPacks.value];
+
+    result.sort((a, b) => {
+      // Restricted packs appear last by default
+      if (!includeRestrictedInSort.value) {
+        const difference =
+          Number(a.restricted) - Number(b.restricted);
+
+        if (difference !== 0) return difference;
+      }
+
+      switch (sortBy.value) {
+        case "price-asc":
+          return a.price - b.price;
+
+        case "price-desc":
+          return b.price - a.price;
+
+        case "name":
+          return a.name.localeCompare(b.name);
+
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  });
+
+  const {
+    currentPage,
+    totalPages,
+    displayedItems: displayedPacks,
+    changePage,
+    resetPage
+  } = usePagination(sortedPacks, packsPerPage);
+
+  watch(
+    [searchQuery, rowsPerPage, sortBy, includeRestrictedInSort],
+    resetPage
   );
-
-  const displayedPacks = computed(() => {
-    const start = (currentPage.value - 1) * packsPerPage;
-
-    return filteredPacks.value.slice(
-      start,
-      start + packsPerPage
-    );
-  });
-
-  watch(searchQuery, () => {
-    currentPage.value = 1;
-  });
-
-  function changePage(page: number) {
-    if (page < 1 || page > totalPages.value) return;
-
-    currentPage.value = page;
-  }
 
   async function loadPacks() {
     loading.value = true;
@@ -88,6 +123,9 @@ export function usePackShop() {
     filteredPacks,
     totalPages,
     displayedPacks,
+    rowsPerPage,
+    sortBy,
+    includeRestrictedInSort,
     openPurchaseModal,
     closePurchaseModal,
     handlePurchase,

@@ -2,6 +2,7 @@
   import CardDetailsModal from "../../global/components/CardDetailsModal.vue";
   import { useCardShop } from "./composables/useCardShop.ts";
   import "./styles/card-shop.css";
+  import Pagination from "@/global/components/Pagination.vue";
 
   const {
     searchQuery,
@@ -64,27 +65,11 @@
           <span>{{ paginatedCards.length }} cards displayed</span>
         </div>
 
-        <div class="pagination">
-          <button
-            class="pagination-button"
-            :disabled="currentPage === 1"
-            @click="changePage('previous')"
-          >
-            ← Previous
-          </button>
-
-          <span class="pagination-info">
-            Page {{ currentPage }} of {{ totalPages }}
-          </span>
-
-          <button
-            class="pagination-button"
-            :disabled="currentPage >= totalPages"
-            @click="changePage('next')"
-          >
-            Next →
-          </button>
-        </div>
+        <Pagination
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @change-page="changePage"
+        />
 
         <div class="card-results" :style="{gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))`}">
           <div
@@ -111,27 +96,11 @@
           </div>
         </div>
 
-        <div class="pagination">
-          <button
-            class="pagination-button"
-            :disabled="currentPage === 1"
-            @click="changePage('previous')"
-          >
-            ← Previous
-          </button>
-
-          <span class="pagination-info">
-            Page {{ currentPage }} of {{ totalPages }}
-          </span>
-
-          <button
-            class="pagination-button"
-            :disabled="currentPage >= totalPages"
-            @click="changePage('next')"
-          >
-            Next →
-          </button>
-        </div>
+        <Pagination
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @change-page="changePage"
+        />
       </div>
     </div>
 

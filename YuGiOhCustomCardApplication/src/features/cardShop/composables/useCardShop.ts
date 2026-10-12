@@ -1,18 +1,6 @@
-
-import {
-  ref,
-  computed,
-  onMounted,
-  onUnmounted,
-  nextTick,
-  watch
-} from "vue";
-
-import {
-  getShopCards,
-  purchaseShopCard,
-  type ShopCard
-} from "../services/cardShopService";
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
+import { getShopCards, purchaseShopCard, type ShopCard } from "../services/cardShopService";
+import { usePagination } from "@/global/composables/usePagination";
 
 export function useCardShop() {
   const cards = ref<ShopCard[]>([]);
@@ -27,11 +15,7 @@ export function useCardShop() {
   const purchaseMessage = ref("");
   const purchaseError = ref("");
 
-  const selectedCard = computed(() =>
-    cards.value.find(card => card.id === selectedCardId.value)
-  );
-
-  const currentPage = ref(1);
+  const selectedCard = computed(() => cards.value.find(card => card.id === selectedCardId.value));
   const columnsPerRow = ref(5);
 
   const galleryRef = ref<HTMLElement | null>(null);
@@ -41,49 +25,44 @@ export function useCardShop() {
     const minimumCardWidth = 155;
     const gap = 20;
     const horizontalPadding = 40;
-
     const availableWidth = Math.max(0, width - horizontalPadding);
-
-    columnsPerRow.value = Math.max(
-      1,
-      Math.floor((availableWidth + gap) / (minimumCardWidth + gap))
-    );
+    columnsPerRow.value = Math.max( 1, Math.floor((availableWidth + gap) / (minimumCardWidth + gap)) );
   }
-
   const cardsPerPage = computed(() => columnsPerRow.value * 4);
 
   const filteredCards = computed(() => {
     const query = activeSearch.value.trim().toLowerCase();
-
     console.log("Search query:", query);
-
     const results = cards.value.filter(card =>
         (card.card_name ?? "").toLowerCase().includes(query)
     );
-
     console.log("Matching cards:", results);
-
     return results;
+  });
+
+    
+  const {
+    currentPage,
+    totalPages,
+    displayedItems: paginatedCards,
+    changePage: setPage
+  } = usePagination(filteredCards, cardsPerPage);
+
+  
+  async function changePage(page: number) {
+    if (page < 1 || page > totalPages.value) return;
+
+    setPage(page);
+
+    await nextTick();
+
+    document.getElementById("card-gallery")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
     });
+  }
 
-  const totalPages = computed(() =>
-    Math.max(1, Math.ceil(filteredCards.value.length / cardsPerPage.value))
-  );
 
-  watch(totalPages, newTotal => {
-    if (currentPage.value > newTotal) {
-      currentPage.value = newTotal;
-    }
-  });
-
-  const paginatedCards = computed(() => {
-    const start = (currentPage.value - 1) * cardsPerPage.value;
-
-    return filteredCards.value.slice(
-      start,
-      start + cardsPerPage.value
-    );
-  });
 
   async function loadCards() {
     loading.value = true;
@@ -136,21 +115,6 @@ export function useCardShop() {
     } finally {
       purchasing.value = false;
     }
-  }
-
-  async function changePage(direction: "next" | "previous") {
-    if (direction === "next" && currentPage.value < totalPages.value) {
-      currentPage.value++;
-    } else if (direction === "previous" && currentPage.value > 1) {
-      currentPage.value--;
-    }
-
-    await nextTick();
-
-    document.getElementById("card-gallery")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
   }
 
   onMounted(async () => {

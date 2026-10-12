@@ -29,7 +29,7 @@ export function usePackShop() {
 
   const searchQuery = ref("");
 
-  const rowsPerPage = ref<number | "all">(3);
+  const rowsPerPage = ref<number | "all">(2);
   const sortBy = ref("default");
   const includeRestrictedInSort = ref(false);
 

@@ -3,6 +3,7 @@ import { useRoute, useRouter } from "vue-router";
 import { getAllCards, searchCardsByName } from "../services/cardService";
 import { createDefaultCardFilters } from "@/global/types/cardFilters";
 import { filterAndSortCards } from "@/global/utils/cardFiltering";
+import { usePagination } from "@/global/composables/usePagination";
 
 export function useCardSearch() {
   const route = useRoute();
@@ -46,21 +47,6 @@ export function useCardSearch() {
     selectedCardId.value = null;
   }
 
-  async function changePage(direction: "next" | "previous") {
-    if (direction === "next") {
-      nextPage();
-    } else {
-      previousPage();
-    }
-
-    await nextTick();
-
-    document.getElementById("card-gallery")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }
-
   function updateCardsPerPage() {
     if (!galleryElement.value) return;
 
@@ -90,28 +76,33 @@ export function useCardSearch() {
     updateSearchURL();
   }
 
-  const currentPage = ref(
-    Math.max(1, Number(route.query.page) || 1)
-  );
+  const {
+    currentPage,
+    totalPages,
+    displayedItems: paginatedCards,
+    changePage: setPage
+  } = usePagination(filteredCards, cardsPerPage);
 
-  const totalPages = computed(() =>
-    Math.max(
-      1,
-      Math.ceil(
-        filteredCards.value.length / cardsPerPage.value
-      )
-    )
-  );
+  // Preserve the page from the URL when initially loading.
+  const initialPage = Number(route.query.page);
 
-  const paginatedCards = computed(() => {
-    const start =
-      (currentPage.value - 1) * cardsPerPage.value;
+  if (Number.isInteger(initialPage) && initialPage > 0) {
+    currentPage.value = initialPage;
+  }
 
-    return filteredCards.value.slice(
-      start,
-      start + cardsPerPage.value
-    );
-  });
+  async function changePage(page: number) {
+    if (page < 1 || page > totalPages.value) return;
+
+    setPage(page);
+    updateSearchURL();
+
+    await nextTick();
+
+    document.getElementById("card-gallery")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
 
   function updateSearchURL() {
     router.replace({
@@ -121,22 +112,6 @@ export function useCardSearch() {
         page: currentPage.value,
       },
     });
-  }
-
-  function nextPage() {
-    if (currentPage.value < totalPages.value) {
-      currentPage.value++;
-      updateSearchURL();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }
-
-  function previousPage() {
-    if (currentPage.value > 1) {
-      currentPage.value--;
-      updateSearchURL();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
   }
 
   async function searchCards(

@@ -6,6 +6,7 @@ import CardFilterModal from "@/global/components/CardFilterModal.vue";
 import SellCardModal from "./components/SellCardModal.vue";
 import CollectionTagModal from "./components/CollectionTagModal.vue";
 import BulkTagModal from "./components/BulkTagModal.vue";
+import Pagination from "@/global/components/Pagination.vue";
 
 import type { CollectionCard, CardSaleResult } from "../../global/services/collectionService.ts";
 
@@ -301,28 +302,13 @@ watch(
           >
             Remove Tags
           </button>
-        </div>
-        <div v-if="filteredCollection.length > 0" class="pagination">
-          <button
-            class="pagination-button"
-            @click="changePage('previous')"
-            :disabled="currentPage === 1"
-          >
-            ← Previous
-          </button>
-
-          <span class="pagination-info">
-            Page {{ currentPage }} of {{ totalPages }}
-          </span>
-
-          <button
-            class="pagination-button"
-            @click="changePage('next')"
-            :disabled="currentPage >= totalPages"
-          >
-            Next →
-          </button>
-        </div>
+        </div>      
+        <Pagination
+          v-if="filteredCollection.length > 0"
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @change-page="changePage"
+        />
 
         <p
           v-if="filteredCollection.length === 0"
@@ -402,6 +388,12 @@ watch(
           </div>
         </div>
 
+        <Pagination
+          v-if="filteredCollection.length > 0"
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @change-page="changePage"
+        />
       </div>
     </div>
 

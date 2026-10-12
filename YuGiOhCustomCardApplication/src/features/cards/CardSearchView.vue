@@ -3,6 +3,7 @@
   import { useCardSearch } from "./composables/useCardSearch.ts";
   import CardFilterModal from "@/global/components/CardFilterModal.vue";
   import CardDetailsModal from "@/global/components/CardDetailsModal.vue";
+  import Pagination from "@/global/components/Pagination.vue";
   
   import "./styles/card-search.css";
   
@@ -77,27 +78,11 @@
           <span>{{ paginatedCards.length }} cards displayed</span>
         </div>
 
-    <div class="pagination">
-        <button
-          class="pagination-button"
-          @click="changePage('previous')"
-          :disabled="currentPage === 1"
-        >
-          ← Previous
-        </button>
-
-        <span class="pagination-info">
-          Page {{ currentPage }} of {{ totalPages }}
-        </span>
-
-        <button
-          class="pagination-button"
-          @click="changePage('next')"
-          :disabled="currentPage >= totalPages"
-        >
-          Next →
-        </button>
-      </div>
+        <Pagination
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @change-page="changePage"
+        />
 
       <div ref="galleryElement" class="card-results">
         <div
@@ -119,27 +104,11 @@
         </div>
       </div>
 
-      <div class="pagination">
-        <button
-          class="pagination-button"
-          @click="changePage('previous')"
-          :disabled="currentPage === 1"
-        >
-          ← Previous
-        </button>
-
-        <span class="pagination-info">
-          Page {{ currentPage }} of {{ totalPages }}
-        </span>
-
-        <button
-          class="pagination-button"
-          @click="changePage('next')"
-          :disabled="currentPage >= totalPages"
-        >
-          Next →
-        </button>
-      </div>
+      <Pagination
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @change-page="changePage"
+      />
     </div>
     </div>
 

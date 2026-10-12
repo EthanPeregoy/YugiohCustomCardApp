@@ -2,6 +2,7 @@ import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from "vue"
 import { getCollection, type CollectionCard } from "@/global/services/collectionService";
 import { createDefaultCardFilters } from "@/global/types/cardFilters";
 import { filterAndSortCards } from "@/global/utils/cardFiltering";
+import { usePagination } from "@/global/composables/usePagination";
 
 export function useCollection() {
   const collection = ref<CollectionCard[]>([]);
@@ -49,8 +50,6 @@ export function useCollection() {
     );
   });
 
-  // Responsive pagination
-  const currentPage = ref(1);
   const cardsPerPage = ref(28);
 
   const galleryElement = ref<HTMLElement | null>(null);
@@ -61,26 +60,14 @@ export function useCollection() {
 
   const selectedCardId = ref<number | null>(null);
 
+  const {
+    currentPage,
+    totalPages,
+    displayedItems: paginatedCollection,
+    changePage: setPage
+  } = usePagination(filteredCollection, cardsPerPage);
+
   let resizeObserver: ResizeObserver | null = null;
-
-  const totalPages = computed(() =>
-    Math.max(
-      1,
-      Math.ceil(
-        filteredCollection.value.length / cardsPerPage.value
-      )
-    )
-  );
-
-  const paginatedCollection = computed(() => {
-    const start =
-      (currentPage.value - 1) * cardsPerPage.value;
-
-    return filteredCollection.value.slice(
-      start,
-      start + cardsPerPage.value
-    );
-  });
 
   function updateCardsPerPage() {
     if (!galleryElement.value) return;
@@ -118,24 +105,10 @@ export function useCollection() {
     selectedCardId.value = null;
   }
 
-  function nextPage() {
-    if (currentPage.value < totalPages.value) {
-      currentPage.value++;
-    }
-  }
+  async function changePage(page: number) {
+    if (page < 1 || page > totalPages.value) return;
 
-  function previousPage() {
-    if (currentPage.value > 1) {
-      currentPage.value--;
-    }
-  }
-
-  async function changePage(direction: "next" | "previous") {
-    if (direction === "next") {
-      nextPage();
-    } else {
-      previousPage();
-    }
+    setPage(page);
 
     await nextTick();
 

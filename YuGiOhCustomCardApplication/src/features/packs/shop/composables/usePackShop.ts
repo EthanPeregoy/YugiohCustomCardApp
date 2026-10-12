@@ -10,6 +10,8 @@ export function usePackShop() {
 
   const selectedPack = ref<ShopPack | null>(null);
 
+  const selectedPrice = ref<number | "all">("all");
+
   function openPurchaseModal(pack: ShopPack) {
     selectedPack.value = pack;
   }
@@ -40,17 +42,22 @@ export function usePackShop() {
 
     return rowsPerPage.value * columnsPerRow;
   });
-
-
+  
   const filteredPacks = computed(() => {
     const query = searchQuery.value.trim().toLowerCase();
 
-    return packs.value.filter(pack =>
-      pack.name.toLowerCase().includes(query) ||
-      (pack.description ?? "").toLowerCase().includes(query)
-    );
-  });
+    return packs.value.filter(pack => {
+      const matchesSearch =
+        pack.name.toLowerCase().includes(query) ||
+        (pack.description ?? "").toLowerCase().includes(query);
 
+      const matchesPrice =
+        selectedPrice.value === "all" ||
+        Number(pack.price) === selectedPrice.value;
+
+      return matchesSearch && matchesPrice;
+    });
+  });
   
   const sortedPacks = computed(() => {
     const result = [...filteredPacks.value];
@@ -91,7 +98,13 @@ export function usePackShop() {
   } = usePagination(sortedPacks, packsPerPage);
 
   watch(
-    [searchQuery, rowsPerPage, sortBy, includeRestrictedInSort],
+    [
+      searchQuery,
+      selectedPrice,
+      rowsPerPage,
+      sortBy,
+      includeRestrictedInSort
+    ],
     resetPage
   );
 
@@ -126,6 +139,7 @@ export function usePackShop() {
     rowsPerPage,
     sortBy,
     includeRestrictedInSort,
+    selectedPrice,
     openPurchaseModal,
     closePurchaseModal,
     handlePurchase,

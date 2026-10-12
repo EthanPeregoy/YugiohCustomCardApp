@@ -19,6 +19,7 @@
     rowsPerPage,
     sortBy,
     includeRestrictedInSort,
+    selectedPrice,
     openPurchaseModal,
     closePurchaseModal,
     handlePurchase,
@@ -77,10 +78,23 @@
             <option value="name">Name: A to Z</option>
           </select>
         </label>
+
+        
+        <label>
+          Price
+          <select v-model="selectedPrice">
+            <option value="all">All Prices</option>
+            <option :value="30">30 DP</option>
+            <option :value="50">50 DP</option>
+            <option :value="75">75 DP</option>
+            <option :value="100">100 DP</option>
+          </select>
+        </label>
+
         
         <label class="restricted-sort-toggle">
           <div class="restricted-sort-text">
-            <span>Include Restricted Packs</span>
+            <span>Include Restricted</span>
             <small>Sort restricted packs alongside other packs</small>
           </div>
 

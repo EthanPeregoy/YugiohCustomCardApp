@@ -42,6 +42,30 @@ import { useAuth } from "@/features/auth/composables/useAuth";
       &times;
     </button>
 
+    <!-- User Profile Button -->
+    <RouterLink
+      to="/user"
+      class="profile-button"
+      title="My Profile"
+      aria-label="My Profile"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21a8 8 0 0 1 16 0" />
+      </svg>
+    </RouterLink>
+
     <!-- Title -->
     <header class="home-header">
       <h1 class="home-title">Welcome Duelist!</h1>
@@ -74,19 +98,35 @@ import { useAuth } from "@/features/auth/composables/useAuth";
           Decks
         </RouterLink>
 
-        <RouterLink to="/user" class="home-button">
-          User
+        <RouterLink to="/trade" class="home-button">
+          Trade
         </RouterLink>
-      </div>
 
-      <!-- Admin Only -->
-      <RouterLink
-        v-if="isAdmin"
-        to="/pack-creator"
-        class="home-button admin-button"
-      >
-        Create Pack
-      </RouterLink>
+        <!-- Admin Only -->
+        <template v-if="isAdmin">
+          <RouterLink
+            to="/card-creator"
+            class="home-button"
+          >
+            Card Creator
+          </RouterLink>
+
+          <RouterLink
+            to="/pack-creator"
+            class="home-button"
+          >
+            Create Pack
+          </RouterLink>
+
+          <RouterLink
+            to="/admin"
+            class="home-button"
+          >
+            DM Dashboard
+          </RouterLink>
+        </template>
+      </div>
     </nav>
+
   </main>
 </template>

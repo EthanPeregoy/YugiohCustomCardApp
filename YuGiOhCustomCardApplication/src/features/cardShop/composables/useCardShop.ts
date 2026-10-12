@@ -1,6 +1,8 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
 import { getShopCards, purchaseShopCard, type ShopCard } from "../services/cardShopService";
 import { usePagination } from "@/global/composables/usePagination";
+import { createDefaultCardFilters } from "@/global/types/cardFilters";
+import { filterAndSortCards } from "@/global/utils/cardFiltering";
 
 export function useCardShop() {
   const cards = ref<ShopCard[]>([]);
@@ -18,6 +20,14 @@ export function useCardShop() {
   const selectedCard = computed(() => cards.value.find(card => card.id === selectedCardId.value));
   const columnsPerRow = ref(5);
 
+  const cardFilters = ref(createDefaultCardFilters());
+  const showFilters = ref(false);
+  const availableRarities = computed(() =>
+    [...new Set(cards.value.map(card => card.rarity))]
+      .filter(Boolean)
+      .sort()
+  );
+
   const galleryRef = ref<HTMLElement | null>(null);
   let galleryObserver: ResizeObserver | null = null;
 
@@ -29,17 +39,28 @@ export function useCardShop() {
     columnsPerRow.value = Math.max( 1, Math.floor((availableWidth + gap) / (minimumCardWidth + gap)) );
   }
   const cardsPerPage = computed(() => columnsPerRow.value * 4);
-
+  
   const filteredCards = computed(() => {
     const query = activeSearch.value.trim().toLowerCase();
-    console.log("Search query:", query);
-    const results = cards.value.filter(card =>
-        (card.card_name ?? "").toLowerCase().includes(query)
+
+    const matchingNames = cards.value.filter(card =>
+      card.card_name.toLowerCase().includes(query)
     );
-    console.log("Matching cards:", results);
-    return results;
+
+    return filterAndSortCards(
+      matchingNames,
+      cardFilters.value,
+      "shop"
+    );
   });
 
+  watch(
+    cardFilters,
+    () => {
+      currentPage.value = 1;
+    },
+    { deep: true }
+  );
     
   const {
     currentPage,
@@ -61,8 +82,6 @@ export function useCardShop() {
       block: "start"
     });
   }
-
-
 
   async function loadCards() {
     loading.value = true;
@@ -156,6 +175,9 @@ export function useCardShop() {
     filteredCards,
     totalPages,
     paginatedCards,
+    cardFilters,
+  showFilters,
+  availableRarities,
     loadCards,
     searchCards,
     openCard,

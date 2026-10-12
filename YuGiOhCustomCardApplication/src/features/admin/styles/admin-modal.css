@@ -1,0 +1,259 @@
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(5px);
+}
+
+.admin-modal {
+  width: 100%;
+  max-width: 450px;
+  box-sizing: border-box;
+
+  padding: 30px;
+  background: #1c1032;
+  border: 1px solid #a879e8;
+  border-radius: 14px;
+
+  box-shadow: 0 0 30px rgba(150, 80, 255, 0.35);
+  color: #f0dfff;
+}
+
+.admin-modal h2 {
+  margin: 0 0 10px;
+}
+
+.admin-modal p {
+  color: #d8c3f0;
+  margin-bottom: 25px;
+}
+
+.admin-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-modal label {
+  color: #d8c3f0;
+}
+
+.admin-modal input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+
+  color: white;
+  background: #10091f;
+  border: 1px solid #a879e8;
+  border-radius: 8px;
+}
+
+.admin-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.admin-modal-actions button {
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.admin-modal-cancel {
+  background: transparent;
+  border: 1px solid #a879e8;
+  color: #e4d2fa;
+}
+
+.admin-modal-save {
+  background: #59328d;
+  border: 1px solid #b47bff;
+  color: white;
+}
+
+.admin-modal-save:hover {
+  background: #7547ae;
+}
+
+.admin-modal-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-modal-error {
+  color: #ff8585 !important;
+  margin: 0 !important;
+}
+
+
+/* Duel Point Management */
+
+.admin-dp-balance,
+.admin-dp-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+
+  padding: 15px;
+  background: rgba(55, 30, 85, 0.6);
+  border-radius: 8px;
+}
+
+.admin-dp-balance {
+  margin-bottom: 20px;
+}
+
+.admin-dp-preview {
+  margin-top: 10px;
+}
+
+.admin-dp-balance span,
+.admin-dp-preview span {
+  color: #d8c3f0;
+}
+
+.admin-dp-balance strong,
+.admin-dp-preview strong {
+  color: #ffd45e;
+  font-size: 1.2rem;
+}
+
+.admin-dp-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.admin-dp-actions button {
+  flex: 1;
+  padding: 12px;
+
+  background: rgba(30, 15, 55, 0.8);
+  border: 1px solid rgba(170, 110, 255, 0.4);
+  border-radius: 8px;
+
+  color: #d8c3f0;
+  cursor: pointer;
+}
+
+.admin-dp-actions button.active {
+  background: #59328d;
+  border-color: #b47bff;
+  color: white;
+}
+
+.admin-dp-actions button:hover:not(:disabled) {
+  background: #7547ae;
+}
+
+.admin-dp-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   EDIT COLLECTION MODAL
+======================================== */
+
+.admin-edit-collection-modal {
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.admin-edit-collection-modal > label {
+  display: block;
+  margin-bottom: 8px;
+  color: #d8c3f0;
+}
+
+.admin-collection-modal-search {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  padding: 12px;
+  background: #10091f;
+  color: white;
+  border: 1px solid #a879e8;
+  border-radius: 8px;
+}
+
+.admin-collection-modal-results {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 250px;
+  min-height: 90px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding: 8px;
+  background: rgba(10, 5, 25, 0.65);
+  border: 1px solid rgba(170, 110, 255, 0.3);
+  border-radius: 8px;
+}
+
+.admin-collection-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px;
+  text-align: left;
+  color: #f0dfff;
+  background: rgba(45, 25, 75, 0.7);
+  border: 1px solid transparent;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.admin-collection-option:hover {
+  background: #59328d;
+}
+
+.admin-collection-option.selected {
+  border-color: #c594ff;
+  background: #7547ae;
+}
+
+.admin-collection-option img {
+  width: 40px;
+  height: 58px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.admin-collection-option span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-collection-option small {
+  display: block;
+  margin-top: 4px;
+  color: #d8c3f0;
+}
+
+.admin-edit-collection-modal form select {
+  width: 100%;
+  padding: 12px;
+  background: #10091f;
+  color: white;
+  border: 1px solid #a879e8;
+  border-radius: 8px;
+}
+
+.admin-collection-success {
+  color: #9be9b0 !important;
+  margin: 5px 0 !important;
+}

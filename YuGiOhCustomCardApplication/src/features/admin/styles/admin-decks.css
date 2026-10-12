@@ -1,0 +1,439 @@
+
+/* ========================================
+   DM DECK VIEWER
+======================================== */
+
+.admin-decks {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 0 30px;
+  box-sizing: border-box;
+  color: #f0dfff;
+}
+
+.admin-decks > h2 {
+  margin: 0 0 25px;
+  text-align: center;
+  color: #f4e6ff;
+  font-family: "Cinzel", serif;
+  font-size: 1.8rem;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+}
+
+/* ========================================
+   DECK SELECTION LIST
+======================================== */
+
+.admin-decks-list {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(240px, 1fr)
+  );
+  gap: 20px;
+  width: 100%;
+}
+
+.admin-decks-list-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+
+  min-height: 135px;
+  padding: 22px;
+
+  text-align: left;
+  color: #f0dfff;
+
+  background: linear-gradient(
+    145deg,
+    rgba(38, 22, 67, 0.97),
+    rgba(18, 10, 36, 0.97)
+  );
+
+  border: 1px solid rgba(177, 125, 255, 0.5);
+  border-radius: 14px;
+
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.admin-decks-list-item:hover {
+  transform: translateY(-3px);
+  border-color: #d5aaff;
+  box-shadow: 0 8px 24px rgba(126, 67, 207, 0.3);
+}
+
+.admin-decks-list-item strong {
+  color: #f6eaff;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.admin-decks-list-item span {
+  color: #d4bde9;
+  font-size: 0.9rem;
+}
+
+.admin-decks-list-item span:last-child {
+  align-self: flex-end;
+  color: #e6c4ff;
+  font-weight: 600;
+}
+
+/* ========================================
+   SELECTED DECK HEADER
+======================================== */
+
+.admin-decks-detail-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+
+  margin-bottom: 24px;
+  padding: 18px 22px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(31, 16, 56, 0.96),
+    rgba(56, 30, 90, 0.96)
+  );
+
+  border: 1px solid rgba(177, 125, 255, 0.55);
+  border-radius: 12px;
+
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+}
+
+.admin-decks-detail-header h3 {
+  margin: 0;
+  text-align: center;
+  color: #f8eaff;
+  font-family: "Cinzel", serif;
+  font-size: 1.45rem;
+  overflow-wrap: anywhere;
+}
+
+.admin-decks-detail-header > span {
+  justify-self: end;
+  padding: 7px 13px;
+
+  color: #f2dcff;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  background: rgba(12, 5, 26, 0.65);
+  border: 1px solid rgba(170, 110, 255, 0.4);
+  border-radius: 20px;
+}
+
+.admin-decks-detail-header button {
+  justify-self: start;
+  padding: 10px 16px;
+
+  color: #f3e3ff;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  background: rgba(89, 50, 141, 0.85);
+  border: 1px solid #a97ae0;
+  border-radius: 8px;
+
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.admin-decks-detail-header button:hover {
+  background: #7547ae;
+}
+
+/* ========================================
+   DECK SECTIONS
+======================================== */
+
+.admin-decks-section {
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 22px;
+  padding: 0;
+
+  overflow: hidden;
+  box-sizing: border-box;
+
+  background: rgba(16, 9, 31, 0.94);
+  border: 1px solid rgba(162, 105, 231, 0.5);
+  border-radius: 14px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+}
+
+.admin-decks-section h3 {
+  margin: 0;
+  padding: 15px 22px;
+
+  color: #f2e1ff;
+  font-family: "Cinzel", serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+
+  background: linear-gradient(
+    90deg,
+    rgba(83, 44, 132, 0.85),
+    rgba(45, 24, 76, 0.75)
+  );
+
+  border-bottom: 1px solid rgba(170, 110, 255, 0.35);
+}
+
+/* ========================================
+   CARD GRID
+======================================== */
+
+.admin-decks-card-grid {
+  display: grid;
+
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(145px, 1fr)
+  );
+
+  gap: 18px;
+
+  width: 100%;
+  min-width: 0;
+  padding: 22px;
+
+  box-sizing: border-box;
+  align-items: start;
+}
+
+/* ========================================
+   INDIVIDUAL DECK CARDS
+======================================== */
+
+.admin-decks-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  min-width: 0;
+  max-width: 190px;
+  padding: 12px 10px;
+
+  color: #f0dfff;
+
+  background: linear-gradient(
+    180deg,
+    rgba(54, 32, 88, 0.9),
+    rgba(29, 16, 49, 0.95)
+  );
+
+  border: 1px solid rgba(151, 101, 215, 0.5);
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.admin-decks-card:hover {
+  transform: translateY(-4px);
+  border-color: #d5aaff;
+  box-shadow: 0 5px 18px rgba(160, 95, 240, 0.25);
+}
+
+.admin-decks-card img {
+  display: block;
+
+  width: 100%;
+  max-width: 155px;
+  height: auto;
+  aspect-ratio: 0.685;
+
+  object-fit: contain;
+
+  border-radius: 3px;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+}
+
+/* ========================================
+   CARD QUANTITY BADGE
+======================================== */
+
+.admin-decks-card-quantity {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  z-index: 1;
+
+  min-width: 26px;
+  padding: 5px 7px;
+
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+
+  background: #7138af;
+  border: 1px solid #c594ff;
+  border-radius: 7px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================
+   CARD NAMES
+======================================== */
+
+.admin-decks-card-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  width: 100%;
+  min-height: 2.6em;
+
+  overflow: hidden;
+  overflow-wrap: anywhere;
+
+  text-align: center;
+  color: #f0dfff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* ========================================
+   EMPTY DECK SECTIONS
+======================================== */
+
+.admin-decks-section > p {
+  margin: 0;
+  padding: 18px 22px 22px;
+
+  color: #bca7d2;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* Hide the empty card grid's padding */
+
+.admin-decks-card-grid:empty {
+  display: none;
+}
+
+/* ========================================
+   LOADING AND ERROR STATES
+======================================== */
+
+.admin-decks-message {
+  padding: 25px;
+  text-align: center;
+
+  background: rgba(18, 10, 35, 0.9);
+  border: 1px solid rgba(170, 110, 255, 0.4);
+  border-radius: 12px;
+}
+
+.admin-decks-message button {
+  margin-top: 10px;
+  padding: 10px 18px;
+
+  color: white;
+  background: #59328d;
+  border: 1px solid #b47bff;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.admin-decks-message button:hover {
+  background: #7547ae;
+}
+
+/* ========================================
+   RESPONSIVE LAYOUT
+======================================== */
+
+@media (max-width: 900px) {
+  .admin-decks-card-grid {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(125px, 1fr)
+    );
+
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .admin-decks-card {
+    padding: 10px 8px;
+  }
+}
+
+@media (max-width: 650px) {
+  .admin-decks-detail-header {
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    padding: 15px;
+  }
+
+  .admin-decks-detail-header h3 {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    font-size: 1.2rem;
+  }
+
+  .admin-decks-detail-header button {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .admin-decks-detail-header > span {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .admin-decks-card-grid {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(105px, 1fr)
+    );
+
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .admin-decks-section h3 {
+    padding: 13px 15px;
+  }
+
+  .admin-decks-card-name {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-decks-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-decks-list {
+    grid-template-columns: 1fr;
+  }
+}

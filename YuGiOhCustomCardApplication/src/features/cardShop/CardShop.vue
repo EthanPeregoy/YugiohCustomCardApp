@@ -3,6 +3,7 @@
   import { useCardShop } from "./composables/useCardShop.ts";
   import "./styles/card-shop.css";
   import Pagination from "@/global/components/Pagination.vue";
+  import CardFilterModal from "@/global/components/CardFilterModal.vue";
 
   const {
     searchQuery,
@@ -18,6 +19,9 @@
     filteredCards,
     totalPages,
     paginatedCards,
+    cardFilters,
+    showFilters,
+    availableRarities,
     searchCards,
     openCard,
     closeCard,
@@ -43,6 +47,14 @@
 
         <button class="search-button" @click="searchCards">
           Search
+        </button>
+
+        <button
+          type="button"
+          class="search-button"
+          @click="showFilters = true"
+        >
+          Filters
         </button>
       </div>
 
@@ -132,4 +144,12 @@
       @purchase="purchaseCard"
     />
   </main>
+  
+  <CardFilterModal
+    v-model:open="showFilters"
+    v-model="cardFilters"
+    mode="shop"
+    :available-rarities="availableRarities"
+  />
+
 </template>

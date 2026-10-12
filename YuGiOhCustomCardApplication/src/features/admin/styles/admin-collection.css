@@ -1,0 +1,339 @@
+
+/* ========================================
+   DM PLAYER COLLECTION
+======================================== */
+
+.admin-collection {
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.admin-collection-title {
+  text-align: center;
+  color: #f0dfff;
+  margin: 0 0 20px;
+}
+
+/* ========================================
+   PLAYER PANEL
+======================================== */
+
+.admin-player-panel:has(.admin-collection) {
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+/* ========================================
+   GALLERY CONTAINER
+======================================== */
+
+.admin-collection .results-section {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  height: auto;
+  margin: 0;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.admin-collection .gallery-panel {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  padding: 24px;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+/* ========================================
+   GALLERY HEADER
+======================================== */
+
+.admin-collection .admin-gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  width: 100%;
+  min-width: 0;
+  padding-bottom: 20px;
+}
+
+.admin-gallery-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-gallery-heading h2 {
+  margin: 0;
+  color: #f0dfff;
+}
+
+.admin-gallery-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  color: #cbb5e5;
+  font-size: 0.85rem;
+}
+
+/* ========================================
+   SEARCH AND ACTION BUTTONS
+======================================== */
+
+.admin-gallery-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-gallery-controls .search-input {
+  width: 200px;
+  min-width: 0;
+  padding: 11px 12px;
+  box-sizing: border-box;
+
+  background: rgba(12, 6, 28, 0.9);
+  border: 1px solid #76509d;
+  border-radius: 8px;
+
+  color: white;
+  font-size: 0.9rem;
+}
+
+.admin-gallery-controls .search-input:focus {
+  outline: none;
+  border-color: #b47bff;
+}
+
+.admin-gallery-controls button {
+  flex-shrink: 0;
+  padding: 11px 15px;
+  white-space: nowrap;
+
+  background: #7547ae;
+  border: 1px solid #b47bff;
+  border-radius: 8px;
+
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-gallery-controls button:hover {
+  background: #8958c4;
+}
+
+.admin-gallery-controls .edit-collection-button {
+  background: #59328d;
+}
+
+.admin-gallery-controls .edit-collection-button:hover {
+  background: #7547ae;
+}
+
+/* ========================================
+   CARD GALLERY GRID
+======================================== */
+
+.admin-collection .card-results {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 24px;
+
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 24px 30px;
+
+  box-sizing: border-box;
+  align-items: stretch;
+  justify-items: center;
+}
+
+/* ========================================
+   INDIVIDUAL CARDS
+======================================== */
+
+.admin-collection .card-result {
+  width: 100%;
+  min-width: 0;
+  max-width: 200px;
+  height: auto;
+  box-sizing: border-box;
+}
+
+.admin-collection .card-select-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.admin-collection .card-image {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.admin-collection .collection-card-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  width: 100%;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.admin-collection .collection-card-info h3 {
+  margin: 0;
+  color: #f0dfff;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.admin-collection .collection-card-bottom {
+  width: 100%;
+}
+
+.admin-collection .collection-card-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-collection .collection-card-stats p {
+  margin: 0;
+}
+
+.admin-collection .collection-card-rarity {
+  color: #ffd45e;
+  font-weight: 600;
+}
+
+.admin-collection .collection-card-quantity {
+  color: #d8c3f0;
+}
+
+/* ========================================
+   CARD TAGS
+======================================== */
+
+.admin-collection .collection-card-tags {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.admin-collection .collection-tag {
+  padding: 3px 7px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+/* ========================================
+   PAGINATION
+======================================== */
+
+.admin-collection .pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  width: 100%;
+  margin: 20px 0;
+}
+
+/* ========================================
+   RESPONSIVE LAYOUT
+======================================== */
+
+@media (max-width: 1000px) {
+  .admin-collection .card-results {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .admin-collection .admin-gallery-header {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 750px) {
+  .admin-collection .admin-gallery-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-gallery-controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .admin-gallery-controls .search-input {
+    flex: 1;
+    width: auto;
+  }
+
+  .admin-collection .card-results {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    padding: 20px 15px;
+  }
+
+  .admin-collection .gallery-panel {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-gallery-controls .search-input {
+    flex-basis: 100%;
+  }
+
+  .admin-collection .card-results {
+    grid-template-columns: 1fr;
+    padding: 15px 10px;
+  }
+
+  .admin-collection .card-result {
+    max-width: 220px;
+  }
+
+  .admin-collection .gallery-panel {
+    padding: 12px;
+  }
+}

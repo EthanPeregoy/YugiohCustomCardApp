@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import PackCardReveal from "../PackShop.vue";
+import PackCardReveal from "../../details/components/PackCardReveal.vue";
 
 interface PurchasedCard {
   slot_number: number;

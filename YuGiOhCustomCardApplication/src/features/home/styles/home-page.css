@@ -153,11 +153,6 @@
   outline-offset: 4px;
 }
 
-/* Admin Button */
-.admin-button {
-  width: min(100%, 350px);
-}
-
 /* Logout Button */
 .logout-button {
   position: absolute;
@@ -201,6 +196,51 @@
 .logout-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* User Profile Button */
+.profile-button {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: #f4eaff;
+  background: rgba(35, 15, 65, 0.9);
+
+  border: 2px solid #b99aff;
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 12px rgba(165, 107, 255, 0.5),
+    inset 0 0 10px rgba(138, 66, 255, 0.25);
+
+  text-decoration: none;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.profile-button:hover {
+  transform: scale(1.1);
+  background: rgba(75, 35, 125, 0.95);
+
+  box-shadow:
+    0 0 15px #a56bff,
+    0 0 30px rgba(138, 66, 255, 0.7);
+}
+
+.profile-button:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 4px;
 }
 
 /* Smaller Windows */

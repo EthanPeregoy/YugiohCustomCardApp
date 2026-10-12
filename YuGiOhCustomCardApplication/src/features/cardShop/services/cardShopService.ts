@@ -1,12 +1,13 @@
 const API_BASE_URL = "http://localhost:3000/api/card-shop";
+import type { FilterableCard } from "@/global/utils/cardFiltering";
 
-export interface ShopCard {
+export interface ShopCard extends FilterableCard {
   id: number;
-  card_name: string;
   image_path: string;
   rarity: string;
   price: number;
 }
+
 
 export interface PurchaseResult {
   remainingDuelPoints: number;

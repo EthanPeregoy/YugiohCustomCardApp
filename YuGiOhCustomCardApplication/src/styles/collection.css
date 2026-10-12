@@ -97,6 +97,159 @@
 .collection-sale-feedback p {
   margin: 0 0 10px;
 }
+
+.collection-tag-button {
+  align-self: center;
+  padding: 8px 14px;
+  margin: 8px 0;
+
+  font: inherit;
+  color: #ffffff;
+  background: #422459;
+
+  border: 1px solid #9865be;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.collection-tag-button:hover {
+  background: #59317a;
+}
+
+.collection-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.collection-tag {
+  padding: 4px 10px;
+
+  color: #f4eaff;
+  background: #21132e;
+
+  border: 1px solid;
+  border-radius: 20px;
+
+  font-size: 0.8rem;
+}
+
+.collection-card-bottom {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-top: 6px;
+}
+
+.collection-card-stats {
+  flex: 0 1 auto;
+  min-width: 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.collection-card-stats p {
+  margin: 0;
+}
+
+.collection-card-stats .collection-card-quantity {
+  margin-top: 4px;
+}
+
+.collection-card-bottom .collection-sell-button {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 5px 8px;
+  font-size: 0.8rem;
+}
+
+.collection-card-info {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.collection-card-info .collection-tag-button {
+  padding: 4px 8px;
+  margin: 4px 0;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.collection-card-tags {
+  margin: 4px 0;
+  gap: 4px;
+}
+
+.collection-card-tags:empty {
+  display: none;
+}
+
+.collection-tag {
+  padding: 2px 7px;
+  font-size: 0.7rem;
+}
+
+.collection-gallery-actions,
+.collection-tag-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.collection-gallery-actions {
+  justify-content: flex-end;
+}
+
+.collection-tag-toolbar {
+  padding: 10px 14px;
+  margin-bottom: 16px;
+
+  color: #f0dfff;
+  background: rgba(66, 36, 89, 0.5);
+
+  border: 1px solid #73508e;
+  border-radius: 10px;
+}
+
+.collection-tag-toolbar label,
+.collection-tag-selection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.collection-tag-selection {
+  justify-content: center;
+  margin-bottom: 6px;
+  color: #d8b1ff;
+  font-size: 0.8rem;
+}
+
+.collection-tag-toolbar input,
+.collection-tag-selection input {
+  accent-color: #b87aef;
+}
+
+.collection-tag-toolbar .collection-tag-button,
+.collection-gallery-actions .collection-tag-button {
+  margin: 0;
+}
+
+.collection-tag-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 /* Responsive adjustments */
 
 @media (max-width: 600px) {

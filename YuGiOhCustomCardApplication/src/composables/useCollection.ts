@@ -181,6 +181,22 @@ export function useCollection() {
     try {
       collection.value = await getCollection();
 
+      const existingTagIds = new Set(
+        collection.value.flatMap(card =>
+          (card.tags ?? []).map(tag => tag.id)
+        )
+      );
+
+      const remainingTagIds = cardFilters.value.tagIds.filter(
+        id => existingTagIds.has(id)
+      );
+
+      if (
+        remainingTagIds.length !== cardFilters.value.tagIds.length
+      ) {
+        cardFilters.value.tagIds = remainingTagIds;
+      }
+
       if (resetPage) {
         currentPage.value = 1;
       } else {

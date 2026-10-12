@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useCollection } from "../composables/useCollection";
 import CardDetailsModal from "../components/CardDetailsModal.vue";
 import CardFilterModal from "../components/CardFilterModal.vue";
 import SellCardModal from "../components/SellCardModal.vue";
 import type { CollectionCard, CardSaleResult } from "../services/collectionService";
+import CollectionTagModal from "../components/CollectionTagModal.vue";
+import BulkTagModal from "../components/BulkTagModal.vue";
 
 import "../styles/collection.css";
 
@@ -63,6 +65,88 @@ async function handleSale(result: CardSaleResult) {
 }
 
 const showFilters = ref(false);
+
+const showTagModal = ref(false);
+const tagCardId = ref<number | null>(null);
+const tagCardName = ref("");
+
+const assignedTags = ref<
+  CollectionCard["tags"]
+>([]);
+
+function openTagManager() {
+  tagCardId.value = null;
+  tagCardName.value = "";
+  assignedTags.value = [];
+
+  showTagModal.value = true;
+}
+
+async function handleTagsChanged() {
+  await loadCollection(false);
+}
+
+// Bulk Tag Modal Code
+const tagSelectionMode = ref(false);
+const selectedTagCardIds = ref<number[]>([]);
+
+const showBulkTagModal = ref(false);
+const bulkTagAction = ref<"add" | "remove">("add");
+
+const pageCardIds = computed(() =>
+  [...new Set(
+    paginatedCollection.value.map(card => card.card_id)
+  )]
+);
+
+const allPageCardsSelected = computed(() =>
+  pageCardIds.value.length > 0 &&
+  pageCardIds.value.every(id =>
+    selectedTagCardIds.value.includes(id)
+  )
+);
+
+function toggleTagSelectionMode() {
+  tagSelectionMode.value = !tagSelectionMode.value;
+  selectedTagCardIds.value = [];
+}
+
+function toggleSelectPage() {
+  selectedTagCardIds.value = allPageCardsSelected.value
+    ? []
+    : [...pageCardIds.value];
+}
+
+function openBulkTags(action: "add" | "remove") {
+  if (selectedTagCardIds.value.length === 0) return;
+
+  bulkTagAction.value = action;
+  showBulkTagModal.value = true;
+}
+
+async function handleBulkTagsChanged() {
+  selectedTagCardIds.value = [];
+  await loadCollection(false);
+}
+
+// Clear selection when changing pages or search/filter settings.
+watch(
+  [currentPage, searchQuery, cardFilters],
+  () => {
+    selectedTagCardIds.value = [];
+  },
+  { deep: true }
+);
+
+// Also clear it if the visible card identities change.
+watch(
+  pageCardIds,
+  (next, previous) => {
+    if (next.join(",") !== previous.join(",")) {
+      selectedTagCardIds.value = [];
+    }
+  }
+);
 
 </script>
 
@@ -157,9 +241,65 @@ const showFilters = ref(false);
         <div class="gallery-header">
           <h2>Card Gallery</h2>
 
+          <div class="collection-gallery-actions">
+            <span>
+              {{ paginatedCollection.length }} cards displayed
+            </span>
+
+            <button
+              type="button"
+              class="collection-tag-button"
+              @click="toggleTagSelectionMode"
+            >
+              {{ tagSelectionMode ? "Done" : "Tag Cards" }}
+            </button>
+
+            <button
+              type="button"
+              class="collection-tag-button"
+              @click="openTagManager"
+            >
+              Manage Tags
+            </button>
+          </div>
+        </div>
+
+        <div
+          v-if="tagSelectionMode"
+          class="collection-tag-toolbar"
+        >
+          <label>
+            <input
+              type="checkbox"
+              :checked="allPageCardsSelected"
+              :disabled="pageCardIds.length === 0"
+              @change="toggleSelectPage"
+            />
+
+            Select Page
+          </label>
+
           <span>
-            {{ paginatedCollection.length }} cards displayed
+            {{ selectedTagCardIds.length }} unique cards selected
           </span>
+
+          <button
+            type="button"
+            class="collection-tag-button"
+            :disabled="selectedTagCardIds.length === 0"
+            @click="openBulkTags('add')"
+          >
+            Add Tags
+          </button>
+
+          <button
+            type="button"
+            class="collection-tag-button"
+            :disabled="selectedTagCardIds.length === 0"
+            @click="openBulkTags('remove')"
+          >
+            Remove Tags
+          </button>
         </div>
         <div v-if="filteredCollection.length > 0" class="pagination">
           <button
@@ -196,6 +336,20 @@ const showFilters = ref(false);
             :key="card.id"
             class="card-result collection-result"
           >
+            <label
+              v-if="tagSelectionMode"
+              class="collection-tag-selection"
+            >
+              <input
+                v-model="selectedTagCardIds"
+                type="checkbox"
+                :value="card.card_id"
+                :aria-label="`Select ${card.card_name} for tagging`"
+              />
+
+              Select
+            </label>
+
             <button
               type="button"
               class="card-select-button"
@@ -212,28 +366,58 @@ const showFilters = ref(false);
             <div class="collection-card-info">
               <h3>{{ card.card_name }}</h3>
 
-              <p class="collection-card-rarity">
-                {{ card.rarity }}
-              </p>
+              <div class="collection-card-tags">
+                <span
+                  v-for="tag in card.tags"
+                  :key="tag.id"
+                  class="collection-tag"
+                  :style="{ borderColor: tag.color }"
+                >
+                  {{ tag.name }}
+                </span>
+              </div>
 
-              <p class="collection-card-quantity">
-                Owned: {{ card.quantity }}
-              </p>
+              <div class="collection-card-bottom">
+                <div class="collection-card-stats">
+                  <p class="collection-card-rarity">
+                    {{ card.rarity }}
+                  </p>
 
-              <button
-                v-if="canSellAutomatically(card.rarity)"
-                type="button"
-                class="collection-sell-button"
-                @click="openSellModal(card)"
-              >
-                Sell
-              </button>
+                  <p class="collection-card-quantity">
+                    Owned: {{ card.quantity }}
+                  </p>
+                </div>
+
+                <button
+                  v-if="canSellAutomatically(card.rarity)"
+                  type="button"
+                  class="collection-sell-button"
+                  @click="openSellModal(card)"
+                >
+                  Sell
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
       </div>
     </div>
+
+    <BulkTagModal
+      v-model:open="showBulkTagModal"
+      :card-ids="selectedTagCardIds"
+      :action="bulkTagAction"
+      @changed="handleBulkTagsChanged"
+    />
+
+    <CollectionTagModal
+      v-model:open="showTagModal"
+      :card-id="tagCardId"
+      :card-name="tagCardName"
+      :assigned-tags="assignedTags"
+      @changed="handleTagsChanged"
+    />
 
     <CardFilterModal
       v-model:open="showFilters"

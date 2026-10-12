@@ -7,6 +7,7 @@ export type CardFilterMode =
 export interface CardTag {
   id: number;
   name: string;
+  color: string;
 }
 
 export interface CardFilters {

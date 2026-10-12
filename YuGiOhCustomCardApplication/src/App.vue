@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { RouterView, useRoute } from "vue-router";
 
-import BackButton from "./components/BackButton.vue";
+import BackButton from "./global/components/BackButton.vue";
 
 const route = useRoute();
 

@@ -110,3 +110,22 @@
 .shop-error {
   color: #ff9999;
 }
+
+.shop-card-pricing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.shop-original-price {
+  text-decoration: line-through;
+  color: #b7a6c7;
+  font-size: 0.8rem;
+}
+
+.shop-discount {
+  color: #a8f0c0;
+  font-size: 0.75rem;
+  font-weight: 700;
+}

@@ -103,7 +103,24 @@
 
             <div class="shop-card-info">
               <span>{{ card.rarity }}</span>
-              <strong>{{ card.price }} DP</strong>
+
+              <div class="shop-card-pricing">
+                <span
+                  v-if="card.discount_percent > 0"
+                  class="shop-original-price"
+                >
+                  {{ card.base_price }} DP
+                </span>
+
+                <strong>{{ card.price }} DP</strong>
+
+                <span
+                  v-if="card.discount_percent > 0"
+                  class="shop-discount"
+                >
+                  {{ card.discount_percent }}% OFF
+                </span>
+              </div>
             </div>
           </div>
         </div>

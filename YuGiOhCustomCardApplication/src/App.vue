@@ -20,6 +20,10 @@ const showBackButton = computed(() => {
 
 // Determine where the back button should lead
 const backDestination = computed(() => {
+  // Deck Editor returns to My Decks
+  if (route.matched.some(record => record.path === "/decks/:id")) {
+    return "/decks";
+  }
   // Pack Details should return to Pack Shop
   if (route.matched.some(record => record.path === "/packs/:id")) {
     const search = route.query.search;

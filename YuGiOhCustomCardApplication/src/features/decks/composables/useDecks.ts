@@ -34,7 +34,10 @@ export function useDecks() {
 
       decks.value.unshift({
         ...deck,
-        total_cards: 0
+        total_cards: 0,
+        main_count: 0,
+        extra_count: 0,
+        side_count: 0
       });
 
       return deck;

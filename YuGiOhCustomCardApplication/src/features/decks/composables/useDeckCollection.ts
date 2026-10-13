@@ -1,17 +1,20 @@
 import { ref, computed, onMounted } from "vue";
+
 import {
   getCollection,
   type CollectionCard
 } from "@/global/services/collectionService";
 
-export interface DeckCollectionCard {
-  card_id: number;
-  card_name: string;
-  image_path: string | null;
-  card_type: string;
-  frame_type: string;
-  quantity: number;
-}
+import {
+  createDefaultCardFilters,
+  type CardTag
+} from "@/global/types/cardFilters";
+
+import {
+  filterAndSortCards
+} from "@/global/utils/cardFiltering";
+
+export interface DeckCollectionCard extends CollectionCard {}
 
 export function useDeckCollection() {
   const collection = ref<DeckCollectionCard[]>([]);
@@ -19,11 +22,33 @@ export function useDeckCollection() {
   const collectionError = ref("");
   const collectionSearch = ref("");
 
+  const cardFilters = ref(createDefaultCardFilters());
+
+  const availableTags = computed<CardTag[]>(() => {
+    const tagsById = new Map<number, CardTag>();
+
+    for (const card of collection.value) {
+      for (const tag of card.tags ?? []) {
+        tagsById.set(tag.id, tag);
+      }
+    }
+
+    return [...tagsById.values()].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  });
+
   const filteredCollection = computed(() => {
     const query = collectionSearch.value.trim().toLowerCase();
 
-    return collection.value.filter(card =>
+    const matchingNames = collection.value.filter(card =>
       card.card_name.toLowerCase().includes(query)
+    );
+
+    return filterAndSortCards(
+      matchingNames,
+      cardFilters.value,
+      "deck"
     );
   });
 
@@ -32,7 +57,7 @@ export function useDeckCollection() {
     collectionError.value = "";
 
     try {
-      const entries: CollectionCard[] = await getCollection();
+      const entries = await getCollection();
 
       const grouped = new Map<number, DeckCollectionCard>();
 
@@ -41,21 +66,28 @@ export function useDeckCollection() {
 
         if (existing) {
           existing.quantity += Number(entry.quantity);
+
+          // Preserve tags even when a card has multiple rarities.
+          const tagIds = new Set(
+            existing.tags.map(tag => tag.id)
+          );
+
+          for (const tag of entry.tags ?? []) {
+            if (!tagIds.has(tag.id)) {
+              existing.tags.push(tag);
+              tagIds.add(tag.id);
+            }
+          }
         } else {
           grouped.set(entry.card_id, {
-            card_id: entry.card_id,
-            card_name: entry.card_name,
-            image_path: entry.image_path,
-            card_type: entry.card_type,
-            frame_type: entry.frame_type,
-            quantity: Number(entry.quantity)
+            ...entry,
+            quantity: Number(entry.quantity),
+            tags: [...(entry.tags ?? [])]
           });
         }
       }
 
-      collection.value = [...grouped.values()].sort(
-        (a, b) => a.card_name.localeCompare(b.card_name)
-      );
+      collection.value = [...grouped.values()];
     } catch (err) {
       console.error("Failed to load deck collection:", err);
       collectionError.value = "Failed to load your collection.";
@@ -71,6 +103,8 @@ export function useDeckCollection() {
     collectionLoading,
     collectionError,
     collectionSearch,
+    cardFilters,
+    availableTags,
     filteredCollection,
     loadCollection
   };

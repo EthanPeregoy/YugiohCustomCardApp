@@ -83,19 +83,24 @@ export function useCardShop() {
     });
   }
 
-  async function loadCards() {
-    loading.value = true;
+  async function loadCards(showLoading = true) {
+    if (showLoading) {
+      loading.value = true;
+    }
+
     error.value = "";
 
     try {
-        cards.value = await getShopCards();
-
+      cards.value = await getShopCards();
     } catch (err) {
-      error.value = err instanceof Error
-        ? err.message
-        : "An unexpected error occurred";
+      error.value =
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred";
     } finally {
-      loading.value = false;
+      if (showLoading) {
+        loading.value = false;
+      }
     }
   }
 
@@ -126,6 +131,7 @@ export function useCardShop() {
         `Successfully purchased ${selectedCard.value.card_name}! ` +
         `Remaining DP: ${data.remainingDuelPoints}`;
 
+      await loadCards(false);
     } catch (err) {
       purchaseError.value =
         err instanceof Error

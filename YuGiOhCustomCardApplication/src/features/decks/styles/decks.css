@@ -1,4 +1,3 @@
-
 .decks-page {
   width: 100%;
   max-width: 1450px;
@@ -14,6 +13,7 @@
 
 .decks-header h1 {
   margin: 0 0 10px;
+  margin-bottom: 30px;
 }
 
 .decks-header p {
@@ -52,15 +52,30 @@
 }
 
 .deck-card-preview {
-  height: 140px;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  overflow: hidden;
+  margin-bottom: 15px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 15px;
 
   background: rgba(7, 3, 20, 0.65);
   border: 1px solid rgba(170, 110, 255, 0.35);
   border-radius: 10px;
+}
+
+.deck-card-cover-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  pointer-events: none;
+  user-select: none;
 }
 
 .deck-card-preview span {
@@ -215,6 +230,131 @@
   justify-content: center;
   gap: 12px;
   margin-top: 15px;
+}
+
+/* Deck search */
+
+.decks-search-container {
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto 30px;
+}
+
+.decks-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 18px;
+
+  background: rgba(18, 10, 35, 0.9);
+  border: 1px solid #8054ad;
+  border-radius: 10px;
+
+  color: #f0dfff;
+  font-size: 1rem;
+}
+
+.decks-search-input:focus {
+  outline: none;
+  border-color: #b88aff;
+  box-shadow: 0 0 12px rgba(157, 94, 255, 0.3);
+}
+
+/* Deck validity */
+
+.deck-card-status {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 15px;
+}
+
+.deck-invalid-badge,
+.deck-valid-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.deck-invalid-badge {
+  color: #ffb3bd;
+  background: rgba(125, 35, 55, 0.4);
+  border: 1px solid #d45c74;
+}
+
+.deck-valid-badge {
+  color: #a8f0c0;
+  background: rgba(30, 105, 60, 0.35);
+  border: 1px solid #4ba873;
+}
+
+/* Separate Main, Extra, and Side counts */
+
+.deck-card-counts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 20px;
+}
+
+.deck-count-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 5px;
+
+  background: rgba(7, 3, 20, 0.55);
+  border: 1px solid rgba(170, 110, 255, 0.25);
+  border-radius: 8px;
+}
+
+.deck-count-item strong {
+  color: #f0dfff;
+  font-size: 1.25rem;
+}
+
+.deck-count-item span {
+  color: #c9b6e5;
+  font-size: 0.8rem;
+}
+
+.deck-export-button {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px 16px;
+
+  color: #f0dfff;
+  background: rgba(87, 48, 115, 0.8);
+  border: 1px solid #9360b4;
+  border-radius: 8px;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.deck-export-button:hover:not(:disabled) {
+  background: #70428e;
+}
+
+.deck-export-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.deck-export-success {
+  color: #a8f0c0;
+  text-align: center;
+  margin: 12px 0;
+}
+
+.deck-export-error {
+  color: #ff9ca9;
+  text-align: center;
+  margin: 12px 0;
 }
 
 @media (max-width: 950px) {

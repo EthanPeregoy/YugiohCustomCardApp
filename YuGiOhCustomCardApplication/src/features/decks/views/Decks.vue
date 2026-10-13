@@ -1,8 +1,9 @@
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useDecks } from "../composables/useDecks";
+import { Deck, exportDeckYdk } from "../services/deckService";
 import "../styles/decks.css";
 
 const router = useRouter();
@@ -24,6 +25,18 @@ const renamingDeckId = ref<number | null>(null);
 const renameValue = ref("");
 
 const deletingDeckId = ref<number | null>(null);
+
+const searchQuery = ref("");
+
+const filteredDecks = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase();
+
+  if (!query) return decks.value;
+
+  return decks.value.filter(deck =>
+    deck.name.toLowerCase().includes(query)
+  );
+});
 
 async function handleCreateDeck() {
   if (!newDeckName.value.trim()) return;
@@ -70,6 +83,41 @@ async function handleDelete() {
 function openDeck(deckId: number) {
   router.push(`/decks/${deckId}`);
 }
+
+function isDeckValid(mainCount: number): boolean {
+  return mainCount >= 40 && mainCount <= 60;
+}
+
+
+const exportingDeckId = ref<number | null>(null);
+const exportMessage = ref("");
+const exportError = ref("");
+
+async function handleExport(deck: Deck) {
+  if (exportingDeckId.value !== null) return;
+
+  exportingDeckId.value = deck.id;
+  exportMessage.value = "";
+  exportError.value = "";
+
+  try {
+    const result = await exportDeckYdk(deck.id, deck.name);
+
+    exportMessage.value =
+      `Exported "${deck.name}" successfully! ` +
+      `${result.exportedCount} cards exported.` +
+      (result.skippedCount > 0
+        ? ` ${result.skippedCount} custom cards skipped.`
+        : "");
+  } catch (err) {
+    exportError.value =
+      err instanceof Error
+        ? err.message
+        : "Failed to export deck";
+  } finally {
+    exportingDeckId.value = null;
+  }
+}
 </script>
 
 <template>
@@ -77,7 +125,6 @@ function openDeck(deckId: number) {
     <div class="decks-header">
       <div>
         <h1>My Decks</h1>
-        <p>Create and manage your Yu-Gi-Oh! decks.</p>
       </div>
 
       <button
@@ -86,6 +133,24 @@ function openDeck(deckId: number) {
       >
         + Create Deck
       </button>
+
+      <p v-if="exportMessage" class="deck-export-success">
+        {{ exportMessage }}
+      </p>
+
+      <p v-if="exportError" class="deck-export-error">
+        {{ exportError }}
+      </p>
+    </div>
+
+    <div class="decks-search-container">
+      <input
+        v-model="searchQuery"
+        type="text"
+        class="decks-search-input"
+        placeholder="Search your decks..."
+        aria-label="Search decks"
+      />
     </div>
 
     <p v-if="error" class="deck-error">
@@ -104,21 +169,65 @@ function openDeck(deckId: number) {
       <p>Create your first deck to get started!</p>
     </div>
 
+    <div
+      v-else-if="filteredDecks.length === 0"
+      class="deck-message"
+    >
+      No decks match your search.
+    </div>
+
     <div v-else class="decks-grid">
       <div
-        v-for="deck in decks"
+        v-for="deck in filteredDecks"
         :key="deck.id"
         class="deck-card"
       >
         <div class="deck-card-preview">
-          <span>✦</span>
+          <img
+            v-if="deck.cover_card_id && deck.cover_image_path"
+            :src="deck.cover_image_path"
+            :alt="`${deck.name} cover`"
+            class="deck-card-cover-image"
+            :style="{
+              objectPosition: `${deck.cover_position_x}% ${deck.cover_position_y}%`,
+              transform: `scale(${deck.cover_zoom}) rotate(${deck.cover_rotation}deg)`
+            }"
+          />
+
+          <span v-else>✦</span>
         </div>
 
         <h2>{{ deck.name }}</h2>
 
-        <p class="deck-card-count">
-          {{ deck.total_cards }} Cards
-        </p>
+        <div class="deck-card-status">
+          <span
+            v-if="!isDeckValid(deck.main_count)"
+            class="deck-invalid-badge"
+          >
+            ⚠ Invalid
+          </span>
+
+          <span v-else class="deck-valid-badge">
+            ✓ Valid
+          </span>
+        </div>
+
+        <div class="deck-card-counts">
+          <div class="deck-count-item">
+            <strong>{{ deck.main_count }}</strong>
+            <span>Main</span>
+          </div>
+
+          <div class="deck-count-item">
+            <strong>{{ deck.extra_count }}</strong>
+            <span>Extra</span>
+          </div>
+
+          <div class="deck-count-item">
+            <strong>{{ deck.side_count }}</strong>
+            <span>Side</span>
+          </div>
+        </div>
 
         <div class="deck-card-actions">
           <button
@@ -142,6 +251,19 @@ function openDeck(deckId: number) {
             Delete
           </button>
         </div>
+
+        <button
+          type="button"
+          class="deck-export-button"
+          :disabled="exportingDeckId !== null"
+          @click="handleExport(deck)"
+        >
+          {{
+            exportingDeckId === deck.id
+              ? "Exporting..."
+              : "↓ Export YDK"
+          }}
+        </button>
       </div>
     </div>
 

@@ -5,7 +5,11 @@ import { useRoute, useRouter } from "vue-router";
 import { getDeck, type DeckDetails } from "../services/deckService";
 import { useDeckCollection } from "../composables/useDeckCollection";
 import { useDeckEditor, type DeckSection } from "../composables/useDeckEditor";
-import CardDetailsModal from "../../../global/components/CardDetailsModal.vue";
+import CardDetailsModal from "@/global/components/CardDetailsModal.vue";
+import CardFilterModal from "@/global/components/CardFilterModal.vue";
+import DeckCoverModal from "../components/DeckCoverModal.vue";
+import type { DeckCoverSettings } from "../services/deckService";
+import "../styles/deck-cover.css";
 import "../styles/deck-editor.css";
 
 const route = useRoute();
@@ -15,13 +19,20 @@ const deck = ref<DeckDetails | null>(null);
 const loading = ref(true);
 const error = ref("");
 
+const showCoverModal = ref(false);
+const coverMessage = ref("");
+
 const {
   collection,
   collectionLoading,
   collectionError,
   collectionSearch,
+  cardFilters,
+  availableTags,
   filteredCollection
 } = useDeckCollection();
+
+const showFilters = ref(false);
 
 const selectedCardId = ref<number | null>(null);
 
@@ -179,6 +190,15 @@ async function loadDeck() {
   }
 }
 
+function handleCoverSaved(settings: DeckCoverSettings) {
+  if (deck.value) {
+    Object.assign(deck.value, settings);
+  }
+
+  showCoverModal.value = false;
+  coverMessage.value = "Deck cover saved successfully!";
+}
+
 onMounted(loadDeck);
 </script>
 
@@ -210,14 +230,33 @@ onMounted(loadDeck);
           {{ totalCards }} Cards
         </p>
 
-        <button
+        <div class="deck-editor-toolbar-actions">
+          <button
+            type="button"
+            class="deck-primary-button"
+            :disabled="hasChanges || saving"
+            :title="hasChanges
+              ? 'Save your deck changes before editing the cover'
+              : 'Choose a deck cover'"
+            @click="showCoverModal = true"
+          >
+            Edit Cover
+          </button>
+
+          <button
+            type="button"
             class="deck-primary-button"
             :disabled="!hasChanges || saving"
             @click="handleSave"
-            >
+          >
             {{ saving ? "Saving..." : "Save Deck" }}
-        </button>
+          </button>
+        </div>
       </div>
+
+      <p v-if="coverMessage" class="deck-editor-feedback">
+        {{ coverMessage }}
+      </p>
 
       <p v-if="actionMessage" class="deck-editor-feedback">
         {{ actionMessage }}
@@ -323,12 +362,22 @@ onMounted(loadDeck);
         >
         <h2>Your Collection</h2>
 
-        <input
+        <div class="deck-collection-search-row">
+          <input
             v-model="collectionSearch"
             class="deck-collection-search"
             type="text"
             placeholder="Search your collection..."
-        />
+          />
+
+          <button
+            type="button"
+            class="deck-collection-filter-button"
+            @click="showFilters = true"
+          >
+            Filters
+          </button>
+        </div>
 
         <p class="deck-collection-count">
             {{ filteredCollection.length }} /
@@ -408,9 +457,25 @@ onMounted(loadDeck);
       </div>
     </template>
 
+    <CardFilterModal
+      v-model:open="showFilters"
+      v-model="cardFilters"
+      mode="deck"
+      :available-tags="availableTags"
+    />
+
     <CardDetailsModal
       :card-id="selectedCardId"
       @close="closeCard"
+    />
+    
+    <DeckCoverModal
+      v-if="showCoverModal && deck"
+      :deck-id="deck.id"
+      :cards="editableCards"
+      :initial-settings="deck"
+      @close="showCoverModal = false"
+      @saved="handleCoverSaved"
     />
   </main>
 </template>

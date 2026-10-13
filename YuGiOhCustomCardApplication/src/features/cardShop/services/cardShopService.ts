@@ -6,15 +6,18 @@ export interface ShopCard extends FilterableCard {
   image_path: string;
   rarity: string;
   price: number;
+  base_price: number;
+  discount_percent: number;
 }
-
 
 export interface PurchaseResult {
   remainingDuelPoints: number;
 }
 
 export async function getShopCards(): Promise<ShopCard[]> {
-  const response = await fetch(API_BASE_URL);
+  const response = await fetch(API_BASE_URL, {
+    credentials: "include"
+  });
 
   if (!response.ok) {
     throw new Error("Failed to load shop cards");

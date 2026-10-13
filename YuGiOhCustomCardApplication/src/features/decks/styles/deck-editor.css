@@ -293,6 +293,40 @@
   user-select: none;
 }
 
+.deck-collection-search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.deck-collection-search-row .deck-collection-search {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  margin: 0;
+}
+
+.deck-collection-filter-button {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  background: #573073;
+  color: #f0dfff;
+  border: 1px solid #9360b4;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.deck-collection-filter-button:hover {
+  background: #70428e;
+}
+
+.deck-editor-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 @media (max-width: 950px) {
   .deck-editor-workspace {
     grid-template-columns: 1fr;

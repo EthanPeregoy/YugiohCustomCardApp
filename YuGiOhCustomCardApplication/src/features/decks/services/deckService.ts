@@ -1,11 +1,15 @@
 const API_URL = "http://localhost:3000/api/decks";
 
-export interface Deck {
+export interface Deck extends DeckCoverSettings {
   id: number;
   name: string;
   created_at: string;
   updated_at: string;
   total_cards: number;
+  main_count: number;
+  extra_count: number;
+  side_count: number;
+  cover_image_path: string | null;
 }
 
 export interface DeckCard {
@@ -18,7 +22,7 @@ export interface DeckCard {
   quantity: number;
 }
 
-export interface DeckDetails {
+export interface DeckDetails extends DeckCoverSettings {
   id: number;
   name: string;
   created_at: string;
@@ -31,6 +35,16 @@ export interface SaveDeckCard {
   deck_section: "main" | "extra" | "side";
   quantity: number;
 }
+
+export interface DeckCoverSettings {
+  cover_card_id: number | null;
+  cover_position_x: number;
+  cover_position_y: number;
+  cover_zoom: number;
+  cover_rotation: number;
+}
+
+export type SaveDeckCover = DeckCoverSettings;
 
 // Retrieve all decks
 export async function getDecks(): Promise<Deck[]> {
@@ -141,4 +155,81 @@ export async function saveDeckCards(
       data?.error || "Failed to save deck cards"
     );
   }
+}
+
+export async function saveDeckCover(
+  deckId: number,
+  settings: SaveDeckCover
+): Promise<DeckCoverSettings> {
+  const response = await fetch(
+    `${API_URL}/${deckId}/cover`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify(settings)
+    }
+  );
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+
+    throw new Error(
+      data?.error || "Failed to save deck cover"
+    );
+  }
+
+  return response.json();
+}
+
+
+export interface DeckExportResult {
+  exportedCount: number;
+  skippedCount: number;
+}
+
+export async function exportDeckYdk(
+  deckId: number,
+  deckName: string
+): Promise<DeckExportResult> {
+  const response = await fetch(`${API_URL}/${deckId}/export`, {
+    credentials: "include"
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(data?.error || "Failed to export deck");
+  }
+
+  const exportedCount = Number(
+    response.headers.get("X-Exported-Cards") ?? 0
+  );
+
+  const skippedCount = Number(
+    response.headers.get("X-Skipped-Cards") ?? 0
+  );
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+
+  const safeName =
+    deckName
+      .replace(/[^a-zA-Z0-9 _-]/g, "")
+      .trim()
+      .replace(/\s+/g, "_")
+      .slice(0, 80) || `deck_${deckId}`;
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${safeName}.ydk`;
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  return { exportedCount, skippedCount };
 }

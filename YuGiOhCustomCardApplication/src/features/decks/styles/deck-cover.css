@@ -1,0 +1,151 @@
+.deck-cover-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.deck-cover-modal {
+  width: min(100%, 1000px);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 24px;
+  background: #1b102b;
+  color: #f0dfff;
+  border: 1px solid #9564ba;
+  border-radius: 14px;
+}
+
+.deck-cover-header,
+.deck-cover-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.deck-cover-header h2 {
+  margin: 0 0 20px;
+}
+
+.deck-cover-workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.deck-cover-selection,
+.deck-cover-editor {
+  min-width: 0;
+}
+
+.deck-cover-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.deck-cover-card-option {
+  padding: 4px;
+  background: #2c1a40;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.deck-cover-card-option.selected {
+  border-color: #c996ff;
+}
+
+.deck-cover-card-option img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 0.69;
+  object-fit: contain;
+}
+
+.deck-cover-preview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #10091d;
+  border: 1px solid #9564ba;
+  border-radius: 10px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.deck-cover-preview:active {
+  cursor: grabbing;
+}
+
+.deck-cover-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.deck-cover-placeholder {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-size: 5rem;
+  color: #a875d6;
+}
+
+.deck-cover-editor label {
+  display: block;
+  margin-top: 14px;
+}
+
+.deck-cover-editor input[type="range"] {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  accent-color: #a875d6;
+}
+
+.deck-cover-hint {
+  font-size: 0.85rem;
+  color: #cbb2e3;
+}
+
+.deck-cover-actions {
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.deck-cover-header button,
+.deck-cover-actions button {
+  padding: 10px 16px;
+  color: #f0dfff;
+  background: #573073;
+  border: 1px solid #9360b4;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.deck-cover-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.deck-cover-error {
+  color: #ff9ca9;
+}
+
+@media (max-width: 700px) {
+  .deck-cover-workspace {
+    grid-template-columns: 1fr;
+  }
+}

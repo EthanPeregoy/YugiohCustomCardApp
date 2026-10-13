@@ -1,7 +1,8 @@
 <script setup lang="ts">
-    import { useRouter } from "vue-router";
+    import { useRouter, useRoute } from "vue-router";
 
     const router = useRouter();
+    const route = useRoute();
 
     const props = withDefaults(
     defineProps<{
@@ -15,11 +16,18 @@
     );
 
     function goBack() {
-    if (props.useHistory && window.history.state?.back) {
-        router.back();
-    } else {
-        router.push(props.destination);
-    }
+      // When editing a pack, return to its details page
+      if (route.name === "pack-edit") {
+          router.push(`/packs/${route.params.id}`);
+          return;
+      }
+
+      // Existing back button behavior
+      if (props.useHistory && window.history.state?.back) {
+          router.back();
+      } else {
+          router.push(props.destination);
+      }
     }
 </script>
 

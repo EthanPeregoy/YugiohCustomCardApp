@@ -8,6 +8,7 @@
   import "./styles/pack-details.css";
 
   const {
+    isAdmin,
     pack,
     loading,
     error,
@@ -16,10 +17,16 @@
     pulling,
     pullError,
     hasPulled,
+    updatingPublication,
+    publicationError,
+    deletingPack,
+    deleteError,
     openPurchaseModal,
     closePurchaseModal,
     handlePurchase,
-    testPull
+    testPull,
+    togglePublication,
+    removePack
   } = usePackDetails();
 </script>
 
@@ -58,6 +65,13 @@
           Restricted Pack
         </span>
 
+        <span
+          v-if="!pack.is_published"
+          class="restricted-badge"
+        >
+          Unreleased Pack
+        </span>
+
         <p class="description">
           {{ pack.description }}
         </p>
@@ -75,13 +89,63 @@
           </button>
 
           <button
+            v-if="pack.is_published"
             type="button"
             @click="openPurchaseModal"
           >
             Purchase Pack
           </button>
         </div>
+
+        <div v-if="isAdmin" class="pack-admin-actions">
+          <h3>Pack Management</h3>
+
+          <p>
+            Publication Status:
+            <strong>
+              {{ pack.is_published ? "Published" : "Unreleased" }}
+            </strong>
+          </p>
+          <div class="pack-admin-buttons">
+            <button
+              type="button"
+              :disabled="updatingPublication"
+              @click="togglePublication"
+            >
+              {{
+                updatingPublication
+                  ? "Updating..."
+                  : pack.is_published
+                    ? "Unpublish Pack"
+                    : "Publish Pack"
+              }}
+            </button>
+            
+            <button
+              type="button"
+              @click="$router.push(`/packs/${pack.id}/edit`)"
+            >
+              Edit Pack
+            </button>
+
+            <button
+              type="button"
+              class="delete-pack-button"
+              :disabled="deletingPack"
+              @click="removePack"
+            >
+              {{ deletingPack ? "Deleting Pack..." : "Delete Pack" }}
+            </button>
+          </div>
+          <p v-if="deleteError" class="save-error">
+            {{ deleteError }}
+          </p>
+
+          <p v-if="publicationError" class="error">
+            {{ publicationError }}
+          </p>
         </div>
+      </div>
     </section>
 
     <section v-if="hasPulled || pullError" class="test-results">

@@ -1,11 +1,11 @@
-
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-
-import { getPackDetails, generateTestPack, type Pack, type PulledCard } from "../../services/packService";
+import { useRoute, useRouter } from "vue-router";
+import { getPackDetails, generateTestPack, updatePackPublication, deletePack, type Pack, type PulledCard } from "../../services/packService";
+import { useAuth } from "@/features/auth/composables/useAuth";
 
 export function usePackDetails() {
   const route = useRoute();
+  const { isAdmin, checkAdmin } = useAuth();
 
   const pack = ref<Pack | null>(null);
   const loading = ref(true);
@@ -13,8 +13,48 @@ export function usePackDetails() {
 
   const showPurchaseModal = ref(false);
 
+  const updatingPublication = ref(false);
+  const publicationError = ref("");
+
+  const router = useRouter();
+
+  const deletingPack = ref(false);
+  const deleteError = ref("");
+
+  async function togglePublication() {
+    if (!pack.value || updatingPublication.value) return;
+
+    updatingPublication.value = true;
+    publicationError.value = "";
+
+    try {
+      const updatedPack = await updatePackPublication(
+        pack.value.id,
+        !pack.value.is_published
+      );
+
+      pack.value = {
+        ...pack.value,
+        ...updatedPack
+      };
+
+      if (!updatedPack.is_published) {
+        closePurchaseModal();
+      }
+    } catch (err) {
+      console.error("Failed to update publication:", err);
+
+      publicationError.value =
+        err instanceof Error
+          ? err.message
+          : "Failed to update publication status.";
+    } finally {
+      updatingPublication.value = false;
+    }
+  }
+
   function openPurchaseModal() {
-    if (!pack.value) return;
+    if (!pack.value || !pack.value.is_published) return;
 
     showPurchaseModal.value = true;
   }
@@ -74,9 +114,38 @@ export function usePackDetails() {
     }
   }
 
-  onMounted(loadPack);
+  async function removePack() {
+    if (!pack.value || deletingPack.value) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to permanently delete "${pack.value.name}"?\n\n` +
+      "This removes the pack from the shops, but cards already owned by players will remain."
+    );
+
+    if (!confirmed) return;
+
+    deletingPack.value = true;
+    deleteError.value = "";
+
+    try {
+      await deletePack(pack.value.id);
+
+      await router.replace("/packs");
+    } catch (err) {
+      deleteError.value =
+        err instanceof Error
+          ? err.message
+          : "Failed to delete pack.";
+    }
+  }
+
+  onMounted(() => {
+    checkAdmin();
+    loadPack();
+  });
 
   return {
+    isAdmin,
     pack,
     loading,
     error,
@@ -85,10 +154,16 @@ export function usePackDetails() {
     pulling,
     pullError,
     hasPulled,
+    updatingPublication,
+    publicationError,
+    deletingPack,
+    deleteError,
     openPurchaseModal,
     closePurchaseModal,
     handlePurchase,
     loadPack,
-    testPull
+    testPull,
+    togglePublication,
+    removePack
   };
 }

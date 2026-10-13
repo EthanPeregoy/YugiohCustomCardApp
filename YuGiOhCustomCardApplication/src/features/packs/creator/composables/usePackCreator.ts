@@ -2,8 +2,8 @@ import { ref } from "vue";
 import { useCardPools } from "./useCardPools";
 import { useCardSlots } from "./useCardSlots";
 import { simulatePack } from "../utils/packSimulation";
-import type { PulledCard } from "../types/pack";
-import { createPack } from "../../services/packService";
+import type { PulledCard, Rarity, RarityProbabilities } from "../types/pack";
+import { Pack, createPack, updatePack } from "../../services/packService";
 
 export function usePackCreator() {
   // Pack information
@@ -11,12 +11,85 @@ export function usePackCreator() {
   const packDescription = ref("");
   const packPrice = ref(0);
   const packRestricted = ref(false);
+  const packPublished = ref(false);
 
   // Card pools
   const cardPoolsState = useCardPools();
 
   // Card slots and conditional rules
   const cardSlotsState = useCardSlots();
+  
+  function loadExistingPack(pack: Pack) {
+    // Restore basic information
+    packName.value = pack.name;
+    packDescription.value = pack.description ?? "";
+    packPrice.value = pack.price;
+    packRestricted.value = pack.restricted;
+    packPublished.value = pack.is_published;
+
+    // Restore card pools
+    const pools = cardPoolsState.cardPools.value;
+
+    for (const rarity of Object.keys(pools) as Rarity[]) {
+      pools[rarity] = [];
+    }
+
+    for (const card of pack.card_pool) {
+      const rarity = card.rarity as Rarity;
+
+      if (!pools[rarity]) continue;
+
+      pools[rarity].push({
+        id: card.card_id,
+        card_name: card.card_name,
+        image_path: card.image_path ?? ""
+      });
+    }
+
+    // Convert database slot IDs into frontend positions
+    const slotPositions = new Map(
+      pack.slots.map(slot => [slot.id, slot.slot_number])
+    );
+
+    cardSlotsState.cardSlots.value = pack.slots.map(slot => {
+      const probabilities: RarityProbabilities = {
+        "Common": 0,
+        "Rare": 0,
+        "Super Rare": 0,
+        "Ultra Rare": 0,
+        "Secret Rare": 0
+      };
+
+      for (const entry of slot.probabilities) {
+        const rarity = entry.rarity as Rarity;
+
+        if (rarity in probabilities) {
+          probabilities[rarity] = Number(entry.probability);
+        }
+      }
+
+      return {
+        position: slot.slot_number,
+        probabilities,
+        conditions: slot.conditions.map(condition => ({
+          id: crypto.randomUUID(),
+          dependsOnSlot:
+            slotPositions.get(condition.condition_slot_id) ?? 1,
+          conditionRarity: condition.condition_rarity as Rarity,
+          resultRarity: condition.result_rarity as Rarity
+        }))
+      };
+    });
+
+    // Restore slot controls
+    cardSlotsState.cardsPerPack.value =
+      cardSlotsState.cardSlots.value.length;
+
+    cardSlotsState.selectedSlot.value = 1;
+    cardSlotsState.copyStart.value = 1;
+    cardSlotsState.copyEnd.value =
+      cardSlotsState.cardsPerPack.value;
+  }
 
   // Convert frontend pack data into the backend format
   function buildPackPayload(imagePath: string | null = null) {
@@ -50,6 +123,7 @@ export function usePackCreator() {
       image_path: imagePath,
       price: packPrice.value,
       restricted: packRestricted.value,
+      is_published: packPublished.value,
       card_pool,
       slots
     };
@@ -60,8 +134,11 @@ export function usePackCreator() {
   const saveError = ref("");
   const saveSuccess = ref("");
 
-  async function savePack(imagePath: string | null = null) {
-    if (savingPack.value) return;
+  async function savePack(
+    imagePath: string | null = null,
+    editingPackId: number | null = null
+  ): Promise<boolean> {
+    if (savingPack.value) return false;
 
     savingPack.value = true;
     saveError.value = "";
@@ -70,19 +147,24 @@ export function usePackCreator() {
     try {
       const payload = buildPackPayload(imagePath);
 
-      const createdPack = await createPack(payload);
+      if (editingPackId !== null) {
+        const updatedPack = await updatePack(editingPackId, payload);
 
-      saveSuccess.value =
-        `Pack "${createdPack.name}" created successfully!`;
+        saveSuccess.value =
+          `Pack "${updatedPack.name}" updated successfully!`;
+      } else {
+        const createdPack = await createPack(payload);
 
-      console.log("Created pack:", createdPack);
+        saveSuccess.value =
+          `Pack "${createdPack.name}" created successfully!`;
+      }
+
+      return true;
     } catch (err) {
-      console.error("Error saving pack:", err);
-
       saveError.value =
-        err instanceof Error
-          ? err.message
-          : "Failed to save pack.";
+        err instanceof Error ? err.message : "Failed to save pack.";
+
+      return false;
     } finally {
       savingPack.value = false;
     }
@@ -115,6 +197,7 @@ export function usePackCreator() {
     packDescription,
     packPrice,
     packRestricted,
+    packPublished,
 
     // Card pools
     ...cardPoolsState,
@@ -134,6 +217,9 @@ export function usePackCreator() {
     savingPack,
     saveError,
     saveSuccess,
-    savePack
+    savePack,
+
+    // Load existing pack
+    loadExistingPack
   };
 }

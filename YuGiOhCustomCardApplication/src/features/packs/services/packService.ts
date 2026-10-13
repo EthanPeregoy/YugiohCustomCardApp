@@ -7,6 +7,7 @@ export interface ShopPack {
   image_path: string | null;
   price: number;
   restricted: boolean;
+  is_published: boolean;
 }
 
 export interface PoolCard {
@@ -16,6 +17,27 @@ export interface PoolCard {
   rarity: string;
 }
 
+export interface PackSlotProbability {
+  slot_id: number;
+  rarity: string;
+  probability: number;
+}
+
+export interface PackSlotCondition {
+  target_slot_id: number;
+  condition_slot_id: number;
+  condition_rarity: string;
+  result_rarity: string;
+}
+
+export interface PackSlot {
+  id: number;
+  pack_id: number;
+  slot_number: number;
+  probabilities: PackSlotProbability[];
+  conditions: PackSlotCondition[];
+}
+
 export interface Pack {
   id: number;
   name: string;
@@ -23,7 +45,9 @@ export interface Pack {
   image_path: string | null;
   price: number;
   restricted: boolean;
+  is_published: boolean;
   card_pool: PoolCard[];
+  slots: PackSlot[];
 }
 
 export interface PulledCard {
@@ -133,4 +157,72 @@ export async function generateTestPack(
   }
 
   return response.json();
+}
+
+export async function updatePackPublication(
+  packId: number,
+  isPublished: boolean
+): Promise<Pack> {
+  const response = await fetch(
+    `${API_URL}/${packId}/publication`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        is_published: isPublished
+      })
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.error || "Failed to update pack publication."
+    );
+  }
+
+  return data.pack;
+}
+
+export async function updatePack(
+  packId: number,
+  packData: object
+): Promise<Pack> {
+  const response = await fetch(
+    `${API_URL}/${packId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify(packData)
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.error || "Failed to update pack."
+    );
+  }
+
+  return data.pack;
+}
+
+export async function deletePack(packId: number): Promise<void> {
+  const response = await fetch(`${API_URL}/${packId}`, {
+    method: "DELETE",
+    credentials: "include"
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || "Failed to delete pack.");
+  }
 }

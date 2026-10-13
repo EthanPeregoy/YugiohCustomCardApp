@@ -7,7 +7,6 @@
   import "./styles/pack-shop.css";
 
   const {
-    packs,
     loading,
     error,
     selectedPack,
@@ -188,10 +187,15 @@
               <button
                 type="button"
                 class="purchase-button"
+                v-if="pack.is_published"
                 @click.stop="openPurchaseModal(pack)"
               >
                 Purchase
               </button>
+
+              <span v-else class="unpublished-badge">
+                Unreleased
+              </span>
             </div>
           </div>
         </article>

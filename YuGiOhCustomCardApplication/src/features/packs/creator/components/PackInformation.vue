@@ -14,6 +14,10 @@
         required: true
     });
 
+    const packPublished = defineModel<boolean>("packPublished", {
+        required: true
+    });
+
     const cardsPerPack = defineModel<number>("cardsPerPack", {
         required: true
     });
@@ -57,6 +61,23 @@
           <strong>Restricted Pack</strong>
           <small>
             Mark this pack as restricted for players.
+          </small>
+        </span>
+      </label>
+
+      <label class="restricted-option" for="pack-published">
+        <input
+          id="pack-published"
+          v-model="packPublished"
+          type="checkbox"
+        />
+
+        <span class="restricted-option-text">
+          <strong>Publish Pack Immediately</strong>
+          <small>
+            When enabled, this pack will be visible to players
+            and available for purchase, subject to job restrictions.
+            When disabled, only DM/Admin can view or test it.
           </small>
         </span>
       </label>

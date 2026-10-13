@@ -6,8 +6,9 @@
   import CardPoolManager from "./components/CardPoolManager.vue";
   import PackSimulator from "./components/PackSimulator.vue";
   import PackArtworkEditor from "./components/PackArtworkEditor.vue";
-  import { ref } from "vue";
-  import { uploadPackArtwork } from "../services/packService.ts";
+  import { uploadPackArtwork, getPackDetails } from "../services/packService.ts";
+  import { ref, computed, onMounted } from "vue";
+  import { useRoute, useRouter } from "vue-router";
 
   import "./styles/pack-creator.css";
 
@@ -17,12 +18,29 @@
 
   const uploadingArtwork = ref(false);
 
+  const route = useRoute();
+  const router = useRouter();
+
+  const editingPackId = computed(() => {
+    const id = Number(route.params.id);
+
+    return Number.isSafeInteger(id) && id > 0
+      ? id
+      : null;
+  });
+
+  const isEditMode = computed(() => editingPackId.value !== null);
+
+  const loadingExistingPack = ref(false);
+  const existingArtworkPath = ref<string | null>(null);
+
   const {
     // Pack information
     packName,
     packDescription,
     packPrice,
     packRestricted,
+    packPublished,
 
     // Card slots
     cardsPerPack,
@@ -55,11 +73,40 @@
     savingPack,
     saveError,
     saveSuccess,
-    savePack: savePackData
+    savePack: savePackData,
+
+    // Existing pack details
+    loadExistingPack
   } = usePackCreator();
 
+  onMounted(async () => {
+    if (!isEditMode.value || editingPackId.value === null) return;
+
+    loadingExistingPack.value = true;
+
+    try {
+      const existingPack = await getPackDetails(editingPackId.value);
+
+      loadExistingPack(existingPack);
+      existingArtworkPath.value = existingPack.image_path;
+    } catch (error) {
+      console.error("Failed to load pack for editing:", error);
+
+      saveError.value =
+        error instanceof Error
+          ? error.message
+          : "Failed to load pack.";
+    } finally {
+      loadingExistingPack.value = false;
+    }
+  });
+
   async function savePackWithArtwork() {
-    if (uploadingArtwork.value || savingPack.value) return;
+    if (
+      uploadingArtwork.value ||
+      savingPack.value ||
+      loadingExistingPack.value
+    ) return;
 
     uploadingArtwork.value = true;
     saveError.value = "";
@@ -70,11 +117,26 @@
         throw new Error("Artwork editor is unavailable.");
       }
 
-      const artworkFile = await artworkEditor.value.getArtworkFile();
+      let imagePath: string | null = existingArtworkPath.value;
 
-      const uploadResult = await uploadPackArtwork(artworkFile);
+      if (
+        !isEditMode.value ||
+        artworkEditor.value.hasNewArtwork()
+      ) {
+        const artworkFile = await artworkEditor.value.getArtworkFile();
+        const uploadResult = await uploadPackArtwork(artworkFile);
 
-      await savePackData(uploadResult.image_path);
+        imagePath = uploadResult.image_path;
+      }
+
+      const saved = await savePackData(
+        imagePath,
+        editingPackId.value
+      );
+
+      if (saved && isEditMode.value && editingPackId.value !== null) {
+        await router.push(`/packs/${editingPackId.value}`);
+      }
     } catch (error) {
       console.error("Failed to save pack:", error);
 
@@ -91,7 +153,7 @@
 <template>
   <main class="pack-creator-page">
     <div class="pack-creator">
-      <h1>Create New Pack</h1>
+      <h1>{{ isEditMode ? "Edit Pack" : "Create New Pack" }}</h1>
 
       <!-- Pack Information -->
       <PackInformation
@@ -99,12 +161,14 @@
         v-model:pack-description="packDescription"
         v-model:pack-price="packPrice"
         v-model:pack-restricted="packRestricted"
+        v-model:pack-published="packPublished"
         v-model:cards-per-pack="cardsPerPack"
         @update-card-count="updateCardCount"
       />
 
-      <PackArtworkEditor 
-        v-model:pack-name="packName" 
+      <PackArtworkEditor
+        v-model:pack-name="packName"
+        :existing-artwork="existingArtworkPath"
         ref="artworkEditor"
       />
 
@@ -150,10 +214,16 @@
         <button
           type="button"
           class="save-pack-button"
-          :disabled="uploadingArtwork || savingPack"
+          :disabled="loadingExistingPack || uploadingArtwork || savingPack"
           @click="savePackWithArtwork"
         >
-          {{ savingPack ? "Saving Pack..." : "Save Pack" }}
+          {{
+            savingPack
+              ? "Saving Pack..."
+              : isEditMode
+                ? "Save Changes"
+                : "Save Pack"
+          }}
         </button>
 
         <p v-if="saveError" class="save-error">

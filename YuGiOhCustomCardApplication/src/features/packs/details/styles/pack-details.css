@@ -349,3 +349,29 @@ p
   justify-content: flex-end;
   margin-bottom: 20px;
 }
+
+.pack-admin-buttons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.pack-admin-buttons button {
+  margin: 0;
+}
+
+.delete-pack-button {
+  background: #7a2020;
+  color: white;
+  border: 1px solid #c94b4b;
+}
+
+.delete-pack-button:hover:not(:disabled) {
+  background: #a52a2a;
+}
+
+.delete-pack-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

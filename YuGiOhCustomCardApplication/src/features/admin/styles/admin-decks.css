@@ -1,8 +1,3 @@
-
-/* ========================================
-   DM DECK VIEWER
-======================================== */
-
 .admin-decks {
   width: 100%;
   min-width: 0;
@@ -19,10 +14,6 @@
   font-size: 1.8rem;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
 }
-
-/* ========================================
-   DECK SELECTION LIST
-======================================== */
 
 .admin-decks-list {
   display: grid;
@@ -88,10 +79,6 @@
   font-weight: 600;
 }
 
-/* ========================================
-   SELECTED DECK HEADER
-======================================== */
-
 .admin-decks-detail-header {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -155,10 +142,6 @@
   background: #7547ae;
 }
 
-/* ========================================
-   DECK SECTIONS
-======================================== */
-
 .admin-decks-section {
   width: 100%;
   min-width: 0;
@@ -193,10 +176,6 @@
   border-bottom: 1px solid rgba(170, 110, 255, 0.35);
 }
 
-/* ========================================
-   CARD GRID
-======================================== */
-
 .admin-decks-card-grid {
   display: grid;
 
@@ -214,10 +193,6 @@
   box-sizing: border-box;
   align-items: start;
 }
-
-/* ========================================
-   INDIVIDUAL DECK CARDS
-======================================== */
 
 .admin-decks-card {
   position: relative;
@@ -271,10 +246,6 @@
   filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
 }
 
-/* ========================================
-   CARD QUANTITY BADGE
-======================================== */
-
 .admin-decks-card-quantity {
   position: absolute;
   top: 7px;
@@ -296,14 +267,9 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-/* ========================================
-   CARD NAMES
-======================================== */
-
 .admin-decks-card-name {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 
   width: 100%;
   min-height: 2.6em;

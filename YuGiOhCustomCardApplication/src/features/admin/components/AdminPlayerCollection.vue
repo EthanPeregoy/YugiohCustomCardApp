@@ -61,10 +61,6 @@ const galleryElement = ref<HTMLElement | null>(null);
 
 const cardsPerPage = ref(28);
 
-const rowsPerPage = 4;
-const cardMinWidth = 160;
-const cardGap = 24;
-
 let resizeObserver: ResizeObserver | null = null;
 
 const {

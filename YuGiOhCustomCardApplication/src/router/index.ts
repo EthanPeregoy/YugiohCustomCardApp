@@ -85,7 +85,16 @@ const router = createRouter({
       path: "/admin/players/:userId",
       component: AdminPlayerView,
       meta: { requiresAdmin: true },
-    }
+    },
+    {
+      path: "/packs/:id/edit",
+      name: "pack-edit",
+      component: () => import(
+        "@/features/packs/creator/PackCreator.vue"
+      ),
+      meta: { requiresAdmin: true }
+    },
+
   ],
 });
 

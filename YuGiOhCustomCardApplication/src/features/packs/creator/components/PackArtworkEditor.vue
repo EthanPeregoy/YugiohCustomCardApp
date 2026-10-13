@@ -1,6 +1,5 @@
-
 <script setup lang="ts">
-import { ref, watch, nextTick, onBeforeUnmount } from "vue";
+import { ref, watch, nextTick, onBeforeUnmount, computed } from "vue";
 
 import {
   defaultPackArtworkSettings,
@@ -11,6 +10,7 @@ import { renderPackArtwork } from "../utils/renderPackArtwork";
 
 const props = defineProps<{
   packName: string;
+  existingArtwork?: string | null;
 }>();
 
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -21,6 +21,14 @@ const error = ref("");
 
 const settings = ref<PackArtworkSettings>({
   ...defaultPackArtworkSettings
+});
+
+const existingArtworkUrl = computed(() => {
+  if (!props.existingArtwork) return null;
+
+  return props.existingArtwork.startsWith("http")
+    ? props.existingArtwork
+    : `http://localhost:3000${props.existingArtwork}`;
 });
 
 async function uploadArtwork(event: Event) {
@@ -115,7 +123,8 @@ onBeforeUnmount(() => {
 });
 
 defineExpose({
-  getArtworkFile
+  getArtworkFile,
+  hasNewArtwork: () => artworkFile.value !== null
 });
 </script>
 
@@ -378,7 +387,17 @@ defineExpose({
           height="840"
         ></canvas>
 
-        <div v-if="!artworkPreview" class="empty-preview">
+        <img
+          v-if="!artworkPreview && existingArtworkUrl"
+          :src="existingArtworkUrl"
+          alt="Existing pack artwork"
+          class="existing-artwork-preview"
+        />
+
+        <div
+          v-if="!artworkPreview && !existingArtworkUrl"
+          class="empty-preview"
+        >
           Upload an illustration to preview your pack.
         </div>
       </div>
@@ -704,6 +723,17 @@ defineExpose({
 .error {
   color: #ff7777;
   font-size: 13px;
+}
+
+.existing-artwork-preview {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  margin: 20px auto 0;
+
+  border: 1px solid #48566b;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 /* RESPONSIVE LAYOUT */

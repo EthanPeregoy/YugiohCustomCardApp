@@ -13,6 +13,8 @@ export function usePackShop() {
   const selectedPrice = ref<number | "all">("all");
 
   function openPurchaseModal(pack: ShopPack) {
+    if (!pack.is_published) return;
+
     selectedPack.value = pack;
   }
 

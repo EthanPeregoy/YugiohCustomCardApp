@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { useAdminPlayers } from "../composables/useAdminPlayers";
+import CollectionImportRequests from "../components/CollectionImportRequests.vue";
 import "../styles/admin-dashboard.css";
 
 const router = useRouter();
@@ -23,6 +24,8 @@ function viewPlayer(userId: number) {
     <header class="admin-dashboard-header">
       <h1>DM Dashboard</h1>
     </header>
+
+    <CollectionImportRequests />
 
     <section class="admin-player-panel">
       <div class="admin-player-toolbar">

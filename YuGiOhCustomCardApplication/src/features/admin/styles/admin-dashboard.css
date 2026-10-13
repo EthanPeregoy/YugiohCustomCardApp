@@ -132,6 +132,33 @@
   padding: 25px;
 }
 
+.collection-import-panel {
+  margin-bottom: 30px;
+}
+
+.import-request-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 25px;
+  height: 25px;
+  padding: 0 7px;
+  margin-left: 8px;
+
+  border-radius: 20px;
+  background: #8b3dc7;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.collection-import-panel .admin-player-info p {
+  margin: 4px 0;
+}
+
 @media (max-width: 650px) {
   .admin-player-card {
     flex-wrap: wrap;

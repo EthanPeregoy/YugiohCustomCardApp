@@ -7,6 +7,7 @@ import SellCardModal from "./components/SellCardModal.vue";
 import CollectionTagModal from "./components/CollectionTagModal.vue";
 import BulkTagModal from "./components/BulkTagModal.vue";
 import Pagination from "@/global/components/Pagination.vue";
+import { submitCollectionImport } from "./services/collectionImportServices.ts";
 
 import type { CollectionCard, CardSaleResult } from "../../global/services/collectionService.ts";
 
@@ -37,6 +38,11 @@ const selectedSaleCard = ref<CollectionCard | null>(null);
 
 const saleMessage = ref("");
 const affectedDeckNames = ref<string[]>([]);
+
+const csvFileInput = ref<HTMLInputElement | null>(null);
+const importingCSV = ref(false);
+const importMessage = ref("");
+const importError = ref("");
 
 function canSellAutomatically(rarity: string) {
   return [
@@ -150,11 +156,99 @@ watch(
   }
 );
 
+function openCSVPicker() {
+  if (importingCSV.value) return;
+  csvFileInput.value?.click();
+}
+
+async function handleCSVSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+
+  if (!file) return;
+
+  importMessage.value = "";
+  importError.value = "";
+
+  if (!file.name.toLowerCase().endsWith(".csv")) {
+    importError.value = "Please select a CSV file.";
+    input.value = "";
+    return;
+  }
+
+  importingCSV.value = true;
+
+  try {
+    await submitCollectionImport(file);
+
+    importMessage.value =
+      "Your collection import has been submitted " +
+      "to the DM for approval. Your current collection " +
+      "will remain unchanged until approval.";
+  } catch (error) {
+    importError.value =
+      error instanceof Error
+        ? error.message
+        : "Failed to submit collection import.";
+  } finally {
+    importingCSV.value = false;
+    input.value = "";
+  }
+}
 </script>
 
 <template>
   <main class="container collection-page">
     <h1>My Collection</h1>
+    
+    <div class="collection-import-section">
+      <input
+        ref="csvFileInput"
+        type="file"
+        accept=".csv,text/csv"
+        class="collection-csv-input"
+        @change="handleCSVSelected"
+      />
+
+      <button
+        type="button"
+        class="collection-import-button"
+        :disabled="importingCSV"
+        @click="openCSVPicker"
+      >
+        {{ importingCSV ? "Uploading CSV..." : "Import CSV" }}
+      </button>
+
+      <div
+        v-if="importMessage"
+        class="collection-import-notification success"
+        role="status"
+      >
+        <span>{{ importMessage }}</span>
+
+        <button
+          type="button"
+          @click="importMessage = ''"
+        >
+          Dismiss
+        </button>
+      </div>
+
+      <div
+        v-if="importError"
+        class="collection-import-notification error"
+        role="alert"
+      >
+        <span>{{ importError }}</span>
+
+        <button
+          type="button"
+          @click="importError = ''"
+        >
+          Dismiss
+        </button>
+      </div>
+    </div>
 
     <div
       v-if="saleMessage"

@@ -250,6 +250,71 @@
   cursor: default;
 }
 
+.collection-import-section {
+  width: 90%;
+  max-width: 650px;
+  margin: 12px auto 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.collection-csv-input {
+  display: none;
+}
+
+.collection-import-button {
+  padding: 10px 22px;
+  border: 1px solid rgba(190, 145, 255, 0.7);
+  border-radius: 8px;
+  background: rgba(75, 35, 120, 0.9);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.collection-import-button:hover:not(:disabled) {
+  background: rgba(110, 55, 165, 0.95);
+}
+
+.collection-import-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.collection-import-notification {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.collection-import-notification.success {
+  background: rgba(25, 90, 55, 0.9);
+  border: 1px solid #62bb83;
+}
+
+.collection-import-notification.error {
+  background: rgba(115, 35, 45, 0.9);
+  border: 1px solid #e17a84;
+}
+
+.collection-import-notification button {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  background: transparent;
+  color: inherit;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 /* Responsive adjustments */
 
 @media (max-width: 600px) {

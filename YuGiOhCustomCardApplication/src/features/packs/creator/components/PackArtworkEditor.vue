@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, onBeforeUnmount, computed } from "vue";
+import { API_BASE_URL } from "@/global/config/api";
 
 import {
   defaultPackArtworkSettings,
@@ -28,7 +29,7 @@ const existingArtworkUrl = computed(() => {
 
   return props.existingArtwork.startsWith("http")
     ? props.existingArtwork
-    : `http://localhost:3000${props.existingArtwork}`;
+    : `${API_BASE_URL}${props.existingArtwork}`;
 });
 
 async function uploadArtwork(event: Event) {

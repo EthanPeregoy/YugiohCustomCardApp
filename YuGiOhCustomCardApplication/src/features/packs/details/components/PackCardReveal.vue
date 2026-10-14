@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import "../styles/pack-details.css";
+import { API_BASE_URL } from "@/global/config/api"; 
 
 interface RevealCard {
   slot_number: number;
@@ -66,7 +67,7 @@ watch(
         >
           <div class="flip-card-back">
             <img
-              src="http://localhost:3000/card-assets/YugiohCardBack.jpg"
+              :src="`${API_BASE_URL}/card-assets/YugiohCardBack.jpg`"
               alt="Yu-Gi-Oh Card Back"
               class="card-back-image"
             />

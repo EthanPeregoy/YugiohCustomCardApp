@@ -25,6 +25,7 @@
   } = useCardSearch();
 
   const showFilters = ref(false);
+  void galleryElement;
 </script>
 
 <template>

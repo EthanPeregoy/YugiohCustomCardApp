@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:3000/api/admin/collection-imports";
+import { API_URL as BASE_API_URL } from "@/global/config/api";
+
+const API_URL = `${BASE_API_URL}/admin/collection-imports`;
 
 export const STANDARD_RARITIES = [
   "Common",

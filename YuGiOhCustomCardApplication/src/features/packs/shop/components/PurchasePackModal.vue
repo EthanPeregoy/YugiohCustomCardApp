@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import PackCardReveal from "../../details/components/PackCardReveal.vue";
+import { API_BASE_URL, API_URL } from "@/global/config/api";
 
 interface PurchasedCard {
   slot_number: number;
@@ -59,7 +60,7 @@ async function confirmPurchase() {
 
   try {
     const response = await fetch(
-      `http://localhost:3000/api/packs/${props.packId}/purchase`,
+      `${API_URL}/packs/${props.packId}/purchase`,
       {
         method: "POST",
         credentials: "include"
@@ -121,7 +122,7 @@ async function confirmPurchase() {
         <div v-if="!purchaseComplete" class="purchase-confirmation">
           <img
             v-if="packImage"
-            :src="`http://localhost:3000${packImage}`"
+            :src="`${API_BASE_URL}${packImage}`"
             :alt="packName"
             class="pack-artwork"
           />

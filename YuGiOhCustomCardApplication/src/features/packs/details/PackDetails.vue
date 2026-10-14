@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { usePackDetails } from "./composables/usePackDetails.ts";
-
+  import { API_BASE_URL } from "@/global/config/api";
   import PackCardPool from "./components/PackCardPool.vue";
   import PurchasePackModal from "../shop/components/PurchasePackModal.vue";
   import PackCardReveal from "./components/PackCardReveal.vue";
@@ -46,7 +46,7 @@
       <div class="pack-artwork">
         <img
           v-if="pack.image_path"
-          :src="`http://localhost:3000${pack.image_path}`"
+          :src="`${API_BASE_URL}${pack.image_path}`"
           :alt="pack.name"
         />
 

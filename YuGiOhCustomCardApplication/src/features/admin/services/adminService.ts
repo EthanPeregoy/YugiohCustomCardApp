@@ -7,10 +7,12 @@ export interface AdminPlayer {
   created_at: string;
 }
 
-const API_URL = "http://localhost:3000/api/admin";
+import { API_URL } from "@/global/config/api";
+
+const ADMIN_URL = `${API_URL}/admin`;
 
 export async function getAdminPlayers(): Promise<AdminPlayer[]> {
-  const response = await fetch(`${API_URL}/players`, {
+  const response = await fetch(`${ADMIN_URL}/players`, {
     credentials: "include",
   });
 
@@ -24,7 +26,7 @@ export async function getAdminPlayers(): Promise<AdminPlayer[]> {
 export async function getAdminPlayer(
   userId: number
 ): Promise<AdminPlayer> {
-  const response = await fetch(`${API_URL}/players/${userId}`, {
+  const response = await fetch(`${ADMIN_URL}/players/${userId}`, {
     credentials: "include",
   });
 
@@ -40,7 +42,7 @@ export async function updatePlayerJob(
   job: string
 ): Promise<Pick<AdminPlayer, "id" | "username" | "job">> {
   const response = await fetch(
-    `${API_URL}/players/${userId}/job`,
+    `${ADMIN_URL}/players/${userId}/job`,
     {
       method: "PATCH",
       credentials: "include",
@@ -76,7 +78,7 @@ export async function adjustPlayerDuelPoints(
   amount: number
 ): Promise<DuelPointAdjustment> {
   const response = await fetch(
-    `${API_URL}/players/${userId}/duel-points`,
+    `${ADMIN_URL}/players/${userId}/duel-points`,
     {
       method: "PATCH",
       credentials: "include",
@@ -107,7 +109,7 @@ export async function getAdminPlayerCollection(
   userId: number
 ): Promise<CollectionCard[]> {
   const response = await fetch(
-    `${API_URL}/players/${userId}/collection`,
+    `${ADMIN_URL}/players/${userId}/collection`,
     {
       credentials: "include",
     }
@@ -140,7 +142,7 @@ export async function editPlayerCollection(
   quantity: number
 ): Promise<CollectionEditResult> {
   const response = await fetch(
-    `${API_URL}/players/${userId}/collection`,
+    `${ADMIN_URL}/players/${userId}/collection`,
     {
       method: "PATCH",
       credentials: "include",
@@ -176,7 +178,7 @@ export async function getAdminPlayerDecks(
   userId: number
 ): Promise<Deck[]> {
   const response = await fetch(
-    `${API_URL}/players/${userId}/decks`,
+    `${ADMIN_URL}/players/${userId}/decks`,
     { credentials: "include" }
   );
 
@@ -192,7 +194,7 @@ export async function getAdminPlayerDeck(
   deckId: number
 ): Promise<DeckDetails> {
   const response = await fetch(
-    `${API_URL}/players/${userId}/decks/${deckId}`,
+    `${ADMIN_URL}/players/${userId}/decks/${deckId}`,
     { credentials: "include" }
   );
 

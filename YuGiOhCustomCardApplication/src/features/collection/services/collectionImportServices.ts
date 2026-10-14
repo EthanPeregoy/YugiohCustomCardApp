@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:3000/api/collections";
+import { API_URL as BASE_API_URL } from "@/global/config/api";
+
+const API_URL = `${BASE_API_URL}/collections`;
 
 export interface CollectionImportSubmission {
   message?: string;

@@ -195,6 +195,7 @@ async function handleCSVSelected(event: Event) {
     input.value = "";
   }
 }
+void galleryElement;
 </script>
 
 <template>

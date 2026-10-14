@@ -1,4 +1,6 @@
-const AUTH_URL = "http://localhost:3000/api/auth";
+import { API_URL } from "@/global/config/api";
+
+const AUTH_URL = `${API_URL}/auth`;
 
 export async function getCurrentUser() {
   const response = await fetch(`${AUTH_URL}/me`, {

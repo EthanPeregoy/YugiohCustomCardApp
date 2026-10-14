@@ -28,8 +28,8 @@
     purchaseCard,
     changePage
   } = useCardShop();
+  void galleryRef;
 </script>
-
 
 <template>
   <main class="container">

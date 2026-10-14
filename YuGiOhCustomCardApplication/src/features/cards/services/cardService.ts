@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:3000/api/cards";
+import { API_URL as BASE_API_URL } from "@/global/config/api";
+
+const API_URL = `${BASE_API_URL}/cards`;
 
 export async function getAllCards() {
   const response = await fetch(API_URL);

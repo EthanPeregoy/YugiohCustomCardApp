@@ -3,6 +3,7 @@
   import { usePackShop } from "./composables/usePackShop.ts";
   import PurchasePackModal from "./components/PurchasePackModal.vue";
   import Pagination from "@/global/components/Pagination.vue";
+  import { API_BASE_URL } from "@/global/config/api";
 
   import "./styles/pack-shop.css";
 
@@ -155,7 +156,7 @@
           <div class="pack-image-container">
             <img
               v-if="pack.image_path"
-              :src="`http://localhost:3000${pack.image_path}`"
+              :src="`${API_BASE_URL}${pack.image_path}`"
               :alt="pack.name"
               class="pack-image"
             />

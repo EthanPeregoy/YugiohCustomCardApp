@@ -1,6 +1,8 @@
 import type { CardTag } from "../../global/types/cardFilters";
 
-const API_URL = "http://localhost:3000/api/collection-tags";
+import { API_URL as BASE_API_URL } from "@/global/config/api";
+
+const API_URL = `${BASE_API_URL}/collection-tags`;
 
 async function tagRequest(
   path: string,

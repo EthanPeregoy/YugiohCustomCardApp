@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:3000/api/card-shop";
+import { API_URL } from "@/global/config/api";
+const API_BASE_URL = `${API_URL}/card-shop`;
 import type { FilterableCard } from "@/global/utils/cardFiltering";
 
 export interface ShopCard extends FilterableCard {

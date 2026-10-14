@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { RouterLink } from "vue-router";
+import { API_URL } from "@/global/config/api";
 import "./styles/user.css";
 
 interface UserProfile {
@@ -41,7 +42,7 @@ async function fetchUser() {
 
   try {
     const response = await fetch(
-      "http://localhost:3000/api/auth/me",
+      `${API_URL}/auth/me`,
       {
         credentials: "include"
       }

@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:3000/api/decks";
+import { API_URL as BASE_API_URL } from "@/global/config/api";
+
+const API_URL = `${BASE_API_URL}/decks`;
 
 export interface Deck extends DeckCoverSettings {
   id: number;

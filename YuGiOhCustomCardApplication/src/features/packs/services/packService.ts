@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:3000/api/packs";
+import { API_URL as BASE_API_URL } from "@/global/config/api";
+
+const API_URL = `${BASE_API_URL}/packs`;
 
 export interface ShopPack {
   id: number;

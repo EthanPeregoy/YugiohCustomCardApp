@@ -1,7 +1,9 @@
 import type { FilterableCard } from "../utils/cardFiltering";
 import type { CardTag } from "../types/cardFilters";
 
-const API_URL = "http://localhost:3000/api/collections";
+import { API_URL as BASE_API_URL } from "@/global/config/api";
+
+const API_URL = `${BASE_API_URL}/collections`;
 
 export interface CollectionCard extends FilterableCard {
   id: number;

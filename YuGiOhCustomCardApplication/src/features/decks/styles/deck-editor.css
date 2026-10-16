@@ -143,6 +143,15 @@
   border-radius: 12px;
   padding: 15px;
   min-width: 0;
+
+  position: sticky;
+  top: 15px;
+  align-self: start;
+
+  max-height: calc(100vh - 30px);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
 .deck-collection-panel h2 {
@@ -166,7 +175,10 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 650px;
+
+  flex: 1;
+  min-height: 0;
+  max-height: none;
   overflow-y: auto;
 }
 
@@ -325,6 +337,23 @@
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.deck-editor-card {
+  position: relative;
+}
+
+.deck-card-drop-target::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #d6a6ff;
+  border-radius: 4px;
+  z-index: 5;
+  pointer-events: none;
 }
 
 @media (max-width: 950px) {

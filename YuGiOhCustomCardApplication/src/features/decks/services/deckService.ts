@@ -15,13 +15,14 @@ export interface Deck extends DeckCoverSettings {
 }
 
 export interface DeckCard {
+  deck_card_id: number;
   card_id: number;
   card_name: string;
   image_path: string | null;
   card_type: string;
   frame_type: string;
   deck_section: "main" | "extra" | "side";
-  quantity: number;
+  position: number;
 }
 
 export interface DeckDetails extends DeckCoverSettings {
@@ -35,7 +36,7 @@ export interface DeckDetails extends DeckCoverSettings {
 export interface SaveDeckCard {
   card_id: number;
   deck_section: "main" | "extra" | "side";
-  quantity: number;
+  position: number;
 }
 
 export interface DeckCoverSettings {

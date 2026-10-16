@@ -38,14 +38,14 @@ function cardsInSection(section: DeckCard["deck_section"]) {
 
 function sectionCount(section: DeckCard["deck_section"]) {
   return cardsInSection(section).reduce(
-    (total, card) => total + card.quantity,
+    (total, _card) => total + 1,
     0
   );
 }
 
 const totalCards = computed(() =>
   selectedDeck.value?.cards.reduce(
-    (total, card) => total + card.quantity,
+    (total, _card) => total + 1,
     0
   ) ?? 0
 );
@@ -144,9 +144,6 @@ watch(() => props.userId, loadDecks, { immediate: true });
               :src="card.image_path || undefined"
               :alt="card.card_name"
             />
-            <span class="admin-decks-card-quantity">
-              ×{{ card.quantity }}
-            </span>
             <span class="admin-decks-card-name">
               {{ card.card_name }}
             </span>

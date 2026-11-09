@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { computed } from "vue";
     import { rarities, type Card, type Rarity } from "../types/pack";
+    import { getCardImageUrl } from "@/global/utils/cardImage";
 
     const props = defineProps<{
         cardPools: Record<Rarity, Card[]>;
@@ -62,7 +63,7 @@
               class="pool-card-item"
               :title="card.card_name">
               <img
-                :src="card.image_path"
+                :src="getCardImageUrl(card.image_path)"
                 :alt="card.card_name"
                 loading="lazy"/>
 
@@ -105,7 +106,7 @@
             class="search-card">
             <div class="card-info">
               <img
-                :src="card.image_path"
+                :src="getCardImageUrl(card.image_path)"
                 :alt="card.card_name"
                 class="card-thumbnail"
                 loading="lazy"/>

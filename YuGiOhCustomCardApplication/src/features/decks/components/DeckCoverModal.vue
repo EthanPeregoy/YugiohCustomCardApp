@@ -5,6 +5,7 @@ import {
   type DeckCard,
   type DeckCoverSettings
 } from "../services/deckService";
+import { getCardImageUrl } from "@/global/utils/cardImage";
 
 const props = defineProps<{
   deckId: number;
@@ -179,8 +180,8 @@ async function handleSave() {
               @click="selectCard(card.card_id)"
             >
               <img
-                v-if="card.image_path"
-                :src="card.image_path"
+                v-if="getCardImageUrl(card.image_path)"
+                :src="getCardImageUrl(card.image_path)"
                 :alt="card.card_name"
               />
               <span v-else>{{ card.card_name }}</span>

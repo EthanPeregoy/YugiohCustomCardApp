@@ -10,6 +10,7 @@ import type {
   DeckCard
 } from "@/features/decks/services/deckService";
 import CardDetailsModal from "@/global/components/CardDetailsModal.vue";
+import { getCardImageUrl } from "@/global/utils/cardImage";
 import "../styles/admin-decks.css";
 
 const props = defineProps<{ userId: number }>();
@@ -141,7 +142,7 @@ watch(() => props.userId, loadDecks, { immediate: true });
             @click="selectedCardId = card.card_id"
           >
             <img
-              :src="card.image_path || undefined"
+              :src="getCardImageUrl(card.image_path) || undefined"
               :alt="card.card_name"
             />
             <span class="admin-decks-card-name">

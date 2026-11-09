@@ -4,6 +4,7 @@
   import "./styles/card-shop.css";
   import Pagination from "@/global/components/Pagination.vue";
   import CardFilterModal from "@/global/components/CardFilterModal.vue";
+  import { getCardImageUrl } from "@/global/utils/cardImage";
 
   const {
     searchQuery,
@@ -66,9 +67,6 @@
 
     <p v-if="loading">Loading shop cards...</p>
     <p v-else-if="error">{{ error }}</p>
-    <p v-else-if="filteredCards.length === 0">
-      No cards found.
-    </p>
 
     <div v-else class="results-section">
       <div class="gallery-panel" id="card-gallery" ref="galleryRef">
@@ -83,7 +81,14 @@
           @change-page="changePage"
         />
 
-        <div class="card-results" :style="{gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))`}">
+        <p
+          v-if="filteredCards.length === 0"
+          class="card-shop-empty"
+        >
+          No cards found matching your search.
+        </p>
+
+        <div v-else class="card-results" :style="{gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))`}">
           <div
             v-for="card in paginatedCards"
             :key="card.id"
@@ -95,7 +100,7 @@
               @click="openCard(card.id)"
             >
               <img
-                :src="card.image_path"
+                :src="getCardImageUrl(card.image_path)"
                 :alt="card.card_name"
                 class="card-image"
               />

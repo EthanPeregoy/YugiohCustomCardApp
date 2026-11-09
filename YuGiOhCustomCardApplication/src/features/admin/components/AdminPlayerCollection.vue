@@ -10,6 +10,7 @@ import { createDefaultCardFilters } from "@/global/types/cardFilters";
 import { filterAndSortCards } from "@/global/utils/cardFiltering";
 import { usePagination } from "@/global/composables/usePagination";
 import EditCollectionModal from "./EditCollectionModal.vue";
+import { getCardImageUrl } from "@/global/utils/cardImage";
 
 import "@/features/collection/styles/collection.css";
 
@@ -295,7 +296,7 @@ async function refreshCollection() {
               @click="selectedCardId = card.card_id"
             >
               <img
-                :src="card.image_path || undefined"
+                :src="getCardImageUrl(card.image_path) || undefined"
                 :alt="card.card_name"
                 class="card-image"
               />

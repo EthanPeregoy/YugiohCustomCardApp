@@ -9,6 +9,7 @@ import CardDetailsModal from "@/global/components/CardDetailsModal.vue";
 import CardFilterModal from "@/global/components/CardFilterModal.vue";
 import DeckCoverModal from "../components/DeckCoverModal.vue";
 import type { DeckCoverSettings } from "../services/deckService";
+import { getCardImageUrl } from "@/global/utils/cardImage";
 import "../styles/deck-cover.css";
 import "../styles/deck-editor.css";
 
@@ -371,8 +372,8 @@ onMounted(loadDeck);
                 @keydown.space.prevent="openCard(card.card_id)"
               >
                 <img
-                  v-if="card.image_path"
-                  :src="card.image_path"
+                  v-if="getCardImageUrl(card.image_path)"
+                  :src="getCardImageUrl(card.image_path)"
                   :alt="card.card_name"
                 />
 
@@ -469,8 +470,8 @@ onMounted(loadDeck);
               @dragend="endDrag"
             >
             <img
-                v-if="card.image_path"
-                :src="card.image_path"
+                v-if="getCardImageUrl(card.image_path)"
+                :src="getCardImageUrl(card.image_path)"
                 :alt="card.card_name"
                 class="deck-collection-card-image"
             />

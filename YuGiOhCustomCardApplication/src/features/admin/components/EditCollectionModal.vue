@@ -6,6 +6,7 @@ import {
 } from "../services/adminService";
 import { searchCardsByName } from "@/features/cards/services/cardService";
 import type { CollectionCard } from "@/global/services/collectionService";
+import { getCardImageUrl } from "@/global/utils/cardImage";
 
 interface SearchCard {
   id: number;
@@ -239,8 +240,8 @@ async function saveChanges() {
             @click="selectSearchCard(card)"
           >
             <img
-              v-if="card.image_path"
-              :src="card.image_path"
+              v-if="getCardImageUrl(card.image_path)"
+              :src="getCardImageUrl(card.image_path)"
               :alt="card.card_name"
             />
             <span>{{ card.card_name }}</span>
@@ -266,8 +267,8 @@ async function saveChanges() {
             @click="selectOwnedCard(card)"
           >
             <img
-              v-if="card.image_path"
-              :src="card.image_path"
+              v-if="getCardImageUrl(card.image_path)"
+              :src="getCardImageUrl(card.image_path)"
               :alt="card.card_name"
             />
 

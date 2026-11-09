@@ -4,6 +4,7 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useDecks } from "../composables/useDecks";
 import { Deck, exportDeckYdk } from "../services/deckService";
+import { getCardImageUrl } from "@/global/utils/cardImage";
 import "../styles/decks.css";
 
 const router = useRouter();
@@ -184,8 +185,8 @@ async function handleExport(deck: Deck) {
       >
         <div class="deck-card-preview">
           <img
-            v-if="deck.cover_card_id && deck.cover_image_path"
-            :src="deck.cover_image_path"
+            v-if="deck.cover_card_id && getCardImageUrl(deck.cover_image_path)"
+            :src="getCardImageUrl(deck.cover_image_path)"
             :alt="`${deck.name} cover`"
             class="deck-card-cover-image"
             :style="{

@@ -8,6 +8,7 @@ import CollectionTagModal from "./components/CollectionTagModal.vue";
 import BulkTagModal from "./components/BulkTagModal.vue";
 import Pagination from "@/global/components/Pagination.vue";
 import { submitCollectionImport } from "./services/collectionImportServices.ts";
+import { getCardImageUrl } from "@/global/utils/cardImage";
 
 import type { CollectionCard, CardSaleResult } from "../../global/services/collectionService.ts";
 
@@ -439,7 +440,7 @@ void galleryElement;
               @click="openCard(card.card_id)"
             >
               <img
-                :src="card.image_path || undefined"
+                :src="getCardImageUrl(card.image_path) || undefined"
                 :alt="card.card_name"
                 class="card-image"
               />

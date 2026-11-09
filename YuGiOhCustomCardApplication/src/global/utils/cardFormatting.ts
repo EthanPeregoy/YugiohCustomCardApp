@@ -26,22 +26,24 @@ export function formatDescription(description: string): string[] {
     }
 
     const sentences =
-      line.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+      line.match(/[^.]+\.+(?:\s*\))?|[^.]+$/g) || [];
 
     let currentEffect = "";
 
     for (const sentence of sentences) {
-      const trimmed = sentence.trim();
+      const trimmed = sentence
+        .trim()
+        .replace(/\s+([.!?,;:])/g, "$1")
+        .replace(/([.!?])\s+\)/g, "$1)");
 
       const startsNewEffect =
         trimmed.startsWith("When ") ||
         trimmed.startsWith("If ") ||
         trimmed.startsWith("During ") ||
+        trimmed.startsWith("At the ") ||
         trimmed.startsWith("Once ") ||
-        trimmed.startsWith("You can only activate 1") ||
-        trimmed.startsWith("You can only use each effect ") ||
-        trimmed.startsWith("You can only use 1 ") ||
         trimmed.startsWith("\"") ||
+        trimmed.startsWith("While ") ||
         trimmed.startsWith("Reduce ") ||
         trimmed.startsWith("Increase ") ||
         trimmed.startsWith("Negate ") ||
@@ -56,6 +58,10 @@ export function formatDescription(description: string): string[] {
         trimmed.startsWith("Monsters ") ||
         trimmed.startsWith("Return ") ||
         trimmed.startsWith("Reveal ") ||
+        trimmed.startsWith("Twice per turn") ||
+        trimmed.startsWith("Thrice per turn") ||
+        trimmed.startsWith("You can") ||
+        trimmed.startsWith("(Quick Effect): ") ||
         trimmed.startsWith("The first time ");
 
       if (startsNewEffect && currentEffect) {

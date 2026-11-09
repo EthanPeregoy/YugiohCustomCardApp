@@ -2,6 +2,7 @@
 import { ref, watch } from "vue";
 import "../styles/pack-details.css";
 import { API_BASE_URL } from "@/global/config/api"; 
+import { getCardImageUrl } from "@/global/utils/cardImage";
 
 interface RevealCard {
   slot_number: number;
@@ -75,8 +76,8 @@ watch(
 
           <div class="flip-card-front">
             <img
-              v-if="card.image_path"
-              :src="card.image_path"
+              v-if="getCardImageUrl(card.image_path)"
+              :src="getCardImageUrl(card.image_path)"
               :alt="card.card_name"
               class="revealed-card-image"
             />

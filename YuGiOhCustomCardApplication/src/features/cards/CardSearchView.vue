@@ -4,6 +4,7 @@
   import CardFilterModal from "@/global/components/CardFilterModal.vue";
   import CardDetailsModal from "@/global/components/CardDetailsModal.vue";
   import Pagination from "@/global/components/Pagination.vue";
+  import { getCardImageUrl } from "@/global/utils/cardImage";
   
   import "./styles/card-search.css";
   
@@ -85,6 +86,7 @@
           @change-page="changePage"
         />
 
+      
       <div ref="galleryElement" class="card-results">
         <div
           v-for="card in paginatedCards"
@@ -97,7 +99,7 @@
             @click="openCard(card.id)"
           >
             <img
-              :src="card.image_path"
+              :src="getCardImageUrl(card.image_path)"
               :alt="card.cardname"
               class="card-image"
             />

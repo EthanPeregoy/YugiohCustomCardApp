@@ -1,23 +1,23 @@
 <script setup lang="ts">
-    import { toRef } from "vue";
-    import { useCardDetails } from "../composables/useCardDetails";
+  import { toRef } from "vue";
+  import { useCardDetails } from "../composables/useCardDetails";
+  import { getCardImageUrl } from "@/global/utils/cardImage";
+  import {
+  formatDescription,
+  getMonsterTypes,
+  getSpellTrapTypes
+  } from "../utils/cardFormatting";
 
-    import {
-    formatDescription,
-    getMonsterTypes,
-    getSpellTrapTypes
-    } from "../utils/cardFormatting";
+  const props = defineProps<{
+  cardId: string | number;
+  }>();
 
-    const props = defineProps<{
-    cardId: string | number;
-    }>();
-
-    const {
-    cardDetails,
-    loading,
-    error,
-    monsterStats
-    } = useCardDetails(toRef(props, "cardId"));
+  const {
+  cardDetails,
+  loading,
+  error,
+  monsterStats
+  } = useCardDetails(toRef(props, "cardId"));
 </script>
 
 <template>
@@ -30,7 +30,7 @@
         <!-- Card Image -->
         <div class="card-details-image">
           <img
-            :src="cardDetails.image_path"
+            :src="getCardImageUrl(cardDetails.image_path)"
             :alt="cardDetails.card_name"
           />
         </div>
@@ -66,8 +66,8 @@
           <!-- Spell / Trap Type -->
           <p
             v-else-if="
-              cardDetails.card_type === 'Spell Card' ||
-              cardDetails.card_type === 'Trap Card'
+              ['Spell', 'Spell Card', 'Trap', 'Trap Card']
+                .includes(cardDetails.card_type)
             "
             class="card-type"
           >

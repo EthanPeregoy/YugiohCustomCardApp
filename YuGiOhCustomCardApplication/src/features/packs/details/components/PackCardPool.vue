@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import CardDetailsModal from "@/global/components/CardDetailsModal.vue";
+import { getCardImageUrl } from "@/global/utils/cardImage";
 
 interface PoolCard {
   card_id: number;
@@ -95,8 +96,8 @@ function closeCard() {
           @click="openCard(card.card_id)"
         >
           <img
-            v-if="card.image_path"
-            :src="card.image_path"
+            v-if="getCardImageUrl(card.image_path)"
+            :src="getCardImageUrl(card.image_path)"
             :alt="card.card_name"
             loading="lazy"
           />

@@ -1,0 +1,702 @@
+/* All fonts added */
+@font-face {
+  font-family: "MatrixRegularSmallCaps";
+  src: url("../assets/fonts/MatrixRegularSmallCaps.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "MatrixBook";
+  src: url("../assets/fonts/MatrixBook.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "StoneSerif";
+  src: url("../assets/fonts/StoneSerif.otf")
+    format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "StoneSerifBold";
+  src: url("../assets/fonts/StoneSerifBold.otf")
+    format("opentype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "EurostileCandy";
+  src: url("../assets/fonts/EurostileCandyBold.ttf")
+    format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Page style */
+.card-creator-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 30px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+.card-creator-page h1 {
+  margin: 0;
+  color: #f0dfff;
+  text-align: center;
+}
+
+/* Frame Selector */
+.card-frame-selector {
+  position: relative;
+  display: block;
+  width: 220px;
+  padding: 10px 15px;
+
+  border: 2px solid #b89b5e;
+  border-radius: 6px;
+  background: #20152e;
+  color: #f0dfff;
+
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 20;
+}
+.card-frame-selector:focus {
+  outline: none;
+  border-color: #e4c779;
+}
+
+/* Upload Button */
+.card-artwork-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #f0dfff;
+  font-size: 15px;
+}
+
+.card-artwork-upload input {
+  max-width: 240px;
+  color: #f0dfff;
+}
+
+/* Card Preview */
+.card-preview-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.card-preview-workspace {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 502px;
+  max-width: 100%;
+}
+
+.card-preview-canvas {
+  position: relative;
+  width: 502px;
+  height: 739px;
+  flex-shrink: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Outer Card Border */
+.card-preview-border {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 502px;
+  height: 739px;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* Card Frame */
+.card-preview-frame {
+  position: absolute;
+  left: 17px;
+  top: 17px;
+  width: 468px;
+  height: 703px;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+/* Card Name */
+.card-preview-name {
+  position: absolute;
+
+  left: 41px;
+  top: 26px;
+
+  width: max-content;
+  min-width: 374px;
+  height: 52px;
+
+  font-family: "MatrixRegularSmallCaps", serif;
+  font-size: 70px;
+  font-weight: normal;
+  line-height: 52px;
+
+  color: #000;
+  white-space: nowrap;
+
+  transform-origin: left center;
+
+  z-index: 3;
+  pointer-events: none;
+}
+
+.card-preview-name-light {
+  color: #fff;
+}
+
+/* Level and Rank Stars */
+.card-preview-star {
+  position: absolute;
+  object-fit: contain;
+
+  z-index: 4;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Link Marker Selector */
+.link-marker-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  max-width: 240px;
+  margin-top: 8px;
+}
+
+.link-marker-button {
+  height: 48px;
+  background: #1b2637;
+  border: 1px solid #8974aa;
+  border-radius: 5px;
+  color: #ddd;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.link-marker-button.active {
+  background: #a32626;
+  border-color: #ff7777;
+  color: white;
+}
+
+.link-marker-button:hover {
+  border-color: #f0dfff;
+}
+
+.link-marker-button:nth-child(4) {
+  grid-column: 1;
+}
+
+.link-marker-button:nth-child(5) {
+  grid-column: 3;
+}
+
+.card-preview-link-marker {
+  position: absolute;
+  object-fit: fill;
+
+  transform-origin: center center;
+
+  z-index: 6;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Card Attribute Icon */
+.card-preview-attribute {
+  position: absolute;
+
+  left: 418px;
+  top: 35px;
+
+  width: 44px;
+  height: 46px;
+
+  object-fit: fill;
+
+  z-index: 4;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Spell/Trap Header */
+.card-preview-spell-trap-header {
+  position: absolute;
+  left: 190px;
+  top: 90px;
+  width: 261px;
+  height: 37px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+
+  white-space: nowrap;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.card-preview-spell-trap-label {
+  font-family: "Stone Serif Bold", serif;
+  font-size: 25px;
+  font-weight: 900;
+  color: #000;
+  line-height: 1;
+}
+
+.card-preview-spell-trap-bracket {
+  font-family: "Stone Serif Bold", serif;
+  font-size: 25px;
+  font-weight: 900;
+  color: #000;
+  line-height: 1;
+
+  position: relative;
+  top: -3px;
+}
+
+.card-preview-spell-trap-icon {
+  width: 29px;
+  height: 29px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Monster Classification Container */
+.card-preview-classification-container {
+  position: absolute;
+  left: 40px;
+  top: 553px;
+  width: 422px;
+  height: 28px;
+
+  overflow: hidden;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Monster Classification Text */
+.card-preview-classification {
+  display: block;
+  width: max-content;
+
+  font-family: "Stone Serif Bold", serif;
+  font-size: 21px;
+  font-weight: bold;
+  line-height: 28px;
+
+  color: #000;
+  white-space: nowrap;
+
+  transform-origin: left center;
+  user-select: none;
+}
+
+/* Effect Text Input */
+.card-effect-input {
+  width: 100%;
+  min-height: 180px;
+  padding: 12px;
+
+  box-sizing: border-box;
+  resize: vertical;
+
+  background: rgba(15, 10, 25, 0.85);
+  border: 1px solid #b69a53;
+  border-radius: 5px;
+
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.card-effect-input:focus {
+  outline: none;
+  border-color: #f0dfff;
+}
+
+/* Monster Effect Area */
+.card-preview-effect {
+  position: absolute;
+  left: 40px;
+  top: 578px;
+  width: 420px;
+  height: 90px;
+
+  overflow: hidden;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Spell and Trap Effect Area */
+.card-preview-effect-spell-trap {
+  top: 558px;
+  height: 141px;
+}
+
+/* Effect Text */
+.card-preview-effect-text {
+  width: 100%;
+  height: auto;
+
+  font-family: "Matrix Book", serif;
+  font-size: 16px;
+  line-height: 1.05;
+
+  color: #000;
+
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  text-align: left;
+  user-select: none;
+}
+
+/* ATK and DEF containers */
+.card-preview-atk,
+.card-preview-def {
+  position: absolute;
+  top: 670px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+
+  color: #000;
+  white-space: nowrap;
+
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ATK area */
+.card-preview-atk {
+  left: 268px;
+  width: 92px;
+}
+
+/* DEF area */
+.card-preview-def {
+  left: 372px;
+  width: 90px;
+}
+
+/* Labels */
+.card-stat-label {
+  font-family: "Matrix Regular Small Caps", serif;
+  font-size: 21px;
+  line-height: 27px;
+  flex-shrink: 0;
+}
+
+/* Values */
+.card-stat-value {
+  font-family: "Matrix Regular Small Caps", serif;
+  font-size: 23px;
+  line-height: 27px;
+
+  flex: 1;
+  min-width: 0;
+
+  text-align: right;
+}
+
+/* Link Monster ATK */
+.card-preview-atk-link {
+  left: 268px;
+  width: 92px;
+}
+
+/* Link Rating */
+.card-preview-link-rating {
+  position: absolute;
+
+  left: 446px;
+  top: 670px;
+  width: 17px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Eurostile Candy Bold", sans-serif;
+  font-size: 22px;
+  line-height: 24px;
+
+  color: #000;
+  white-space: nowrap;
+
+  z-index: 5;
+  pointer-events: none;
+}
+
+.card-preview-stat-divider {
+  position: absolute;
+  left: 40px;
+  top: 671px;
+  width: 422px;
+  height: 1px;
+  background: #000;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Card Creator Workspace */
+.card-creator-workspace {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 502px minmax(260px, 1fr);
+  align-items: start;
+  gap: 25px;
+
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.card-creator-left,
+.card-creator-right,
+.card-creator-center {
+  min-width: 0;
+}
+
+.card-creator-left .card-artwork-editor {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.card-creator-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.card-link-marker-panel {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+
+  background: rgba(20, 12, 35, 0.85);
+  border: 2px solid #b69a53;
+  border-radius: 10px;
+}
+
+.card-link-marker-panel h3 {
+  margin: 0 0 18px;
+  text-align: center;
+  color: #f0dfff;
+  font-size: 18px;
+}
+
+.card-link-marker-panel .link-marker-selector {
+  margin: 0 auto;
+}
+
+.card-creator-right {
+  padding: 20px;
+  background: rgba(20, 12, 35, 0.9);
+  border: 2px solid #b89b5e;
+  border-radius: 10px;
+  color: #f0dfff;
+  box-sizing: border-box;
+}
+
+.card-creator-right h3 {
+  margin: 0 0 15px;
+  text-align: center;
+}
+
+.card-creator-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Artwork Editor */
+
+.card-artwork-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  width: 100%;
+  min-width: 0;
+  padding: 20px;
+
+  background: rgba(20, 12, 35, 0.9);
+  border: 2px solid #b89b5e;
+  border-radius: 10px;
+  box-sizing: border-box;
+
+  color: #f0dfff;
+}
+
+.card-artwork-editor h3 {
+  margin: 0;
+  text-align: center;
+}
+
+.card-artwork-editor label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.card-artwork-editor input[type="range"] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  cursor: pointer;
+}
+
+.card-artwork-editor button {
+  padding: 10px;
+  background: #302044;
+  border: 1px solid #b89b5e;
+  border-radius: 6px;
+  color: #f0dfff;
+  cursor: pointer;
+}
+
+/* Artwork Transform */
+
+.card-preview-artwork {
+  position: absolute;
+  left: 61px;
+  top: 135px;
+  width: 380px;
+  height: 383px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.card-preview-artwork img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center center;
+  user-select: none;
+  pointer-events: none;
+}
+
+.card-detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.card-creator-right .card-frame-selector {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.card-detail-input {
+  width: 100%;
+  padding: 10px 12px;
+
+  background: #20152e;
+  border: 2px solid #b89b5e;
+  border-radius: 6px;
+
+  color: #f0dfff;
+  font-size: 16px;
+
+  box-sizing: border-box;
+}
+
+.card-detail-input:focus {
+  outline: none;
+  border-color: #e4c779;
+}
+
+.card-detail-input::placeholder {
+  color: #a99ab8;
+}
+
+.card-creator-right {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card-creator-save {
+  margin-top: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.card-creator-save button {
+  padding: 12px 28px;
+  background: #67408f;
+  border: 1px solid #a879d4;
+  border-radius: 6px;
+  color: white;
+  font-family: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.card-creator-save button:hover:not(:disabled) {
+  background: #8054ad;
+}
+
+.card-creator-save button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.card-creator-save-error {
+  color: #ff7777;
+  margin-top: 10px;
+}
+
+.card-creator-save-success {
+  color: #83e6a3;
+  margin-top: 10px;
+}

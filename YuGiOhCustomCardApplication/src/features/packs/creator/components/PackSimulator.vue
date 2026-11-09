@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import type { PulledCard } from "../types/pack";
+    import { getCardImageUrl } from "@/global/utils/cardImage";
 
     defineProps<{
         pulledCards: PulledCard[];
@@ -47,7 +48,7 @@
           :key="pulled.position"
           class="pulled-card">
           <img
-            :src="pulled.card.image_path"
+            :src="getCardImageUrl(pulled.card.image_path)"
             :alt="pulled.card.card_name"/>
 
           <p class="pulled-card-name">
